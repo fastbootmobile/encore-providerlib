@@ -8,7 +8,8 @@ import java.util.List;
 
 public class Artist implements Parcelable {
     private String mName;
-    private List<Album> mAlbums;
+    private String mRef;
+    private List<String> mAlbums;
 
     public static final Creator<Artist> CREATOR = new
             Creator<Artist>() {
@@ -25,7 +26,11 @@ public class Artist implements Parcelable {
         readFromParcel(in);
     }
 
-    private Artist(final String name) {
+    private Artist(final String ref) {
+        mRef = ref;
+    }
+
+    public void setName(String name) {
         mName = name;
     }
 
@@ -33,11 +38,11 @@ public class Artist implements Parcelable {
         return mName;
     }
 
-    public void addAlbum(Album a) {
+    public void addAlbum(String a) {
         mAlbums.add(a);
     }
 
-    public Iterator<Album> getAlbums() {
+    public Iterator<String> getAlbums() {
         return mAlbums.iterator();
     }
 
@@ -48,12 +53,14 @@ public class Artist implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeString(mRef);
         out.writeString(mName);
         out.writeList(mAlbums);
     }
 
     public void readFromParcel(Parcel in) {
+        mRef = in.readString();
         mName = in.readString();
-        mAlbums = in.readArrayList(Album.class.getClassLoader());
+        mAlbums = in.readArrayList(String.class.getClassLoader());
     }
 }

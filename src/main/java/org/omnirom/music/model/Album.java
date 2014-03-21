@@ -9,6 +9,7 @@ import java.util.List;
 public class Album implements Parcelable {
     private List<Song> mSongs;
     private String mName;
+    private String mRef;
 
     public static final Creator<Album> CREATOR = new
             Creator<Album>() {
@@ -21,7 +22,11 @@ public class Album implements Parcelable {
                 }
             };
 
-    public Album(final String name) {
+    public Album(final String ref) {
+        mRef = ref;
+    }
+
+    public void setName(String name) {
         mName = name;
     }
 
@@ -48,11 +53,13 @@ public class Album implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeString(mRef);
         out.writeString(mName);
         out.writeList(mSongs);
     }
 
     public void readFromParcel(Parcel in) {
+        mRef = in.readString();
         mName = in.readString();
         mSongs = in.readArrayList(Song.class.getClassLoader());
     }

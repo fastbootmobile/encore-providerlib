@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Playlist implements Parcelable {
-    private List<Song> mSongs;
+    private ArrayList<String> mSongs;
+    private String mRef;
+    private String mName;
 
     public static final Creator<Playlist> CREATOR = new
             Creator<Playlist>() {
@@ -25,15 +27,24 @@ public class Playlist implements Parcelable {
         readFromParcel(in);
     }
 
-    public Playlist() {
-        mSongs = new ArrayList<Song>();
+    public Playlist(final String ref) {
+        mRef = ref;
+        mSongs = new ArrayList<String>();
     }
 
-    public void addSong(Song s) {
+    public void setName(String name) {
+        mName = name;
+    }
+
+    public String getName() {
+        return mName;
+    }
+
+    public void addSong(String s) {
         mSongs.add(s);
     }
 
-    public void removeSong(Song s) {
+    public void removeSong(String s) {
         mSongs.remove(s);
     }
 
@@ -41,7 +52,7 @@ public class Playlist implements Parcelable {
         mSongs.remove(i);
     }
 
-    public Iterator<Song> iterator() {
+    public Iterator<String> iterator() {
         return mSongs.iterator();
     }
 
@@ -52,10 +63,19 @@ public class Playlist implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeString(mRef);
+        out.writeString(mName);
         out.writeList(mSongs);
     }
 
     public void readFromParcel(Parcel in) {
-        mSongs = in.readArrayList(Song.class.getClassLoader());
+        mRef = in.readString();
+        mName = in.readString();
+        mSongs = in.readArrayList(String.class.getClassLoader());
+    }
+
+    @Override
+    public String toString() {
+        return "'" + mName + "', " + mSongs.size() + " songs, ref: " + mRef;
     }
 }

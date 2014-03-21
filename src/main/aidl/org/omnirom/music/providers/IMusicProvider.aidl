@@ -6,7 +6,14 @@ import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
 import org.omnirom.music.providers.IProviderCallback;
 
-
+/**
+ * This interface represents a music provider and must be implemented as the binder of a service
+ * implementing the PICK_PROVIDER action.
+ * Please note that all the classes of the Model package (Album, Artist, Playlist, Song, ...) take
+ * a "ref" String in their constructor. This reference MUST be unique for ALL providers. It is
+ * strongly recommended to prefix it with the name of your provider service. A good example of
+ * reference format is: "spotify:user:xplodwild:playlist:5oT5U5svjYPQZewzscRIQW"
+ */
 interface IMusicProvider {
     /**
      * Returns the API Version of this provider.

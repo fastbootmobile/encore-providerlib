@@ -6,12 +6,10 @@ import android.os.Parcelable;
 import org.omnirom.music.providers.IMusicProvider;
 
 public class Song implements Parcelable {
-    private IMusicProvider mProvider;
+    private String mRef;
     private String mTitle;
     private String mArtist;
-    private Artist mMatchedArtist;
     private String mAlbum;
-    private Album mMatchedAlbum;
     private int mYear;
 
     public static final Creator<Song> CREATOR = new
@@ -29,12 +27,8 @@ public class Song implements Parcelable {
         readFromParcel(in);
     }
 
-    public Song(IMusicProvider provider) {
-        mProvider = provider;
-    }
-
-    public IMusicProvider getProvider() {
-        return mProvider;
+    public Song(String ref) {
+        mRef = ref;
     }
 
     public String getTitle() {
@@ -53,28 +47,12 @@ public class Song implements Parcelable {
         mArtist = artist;
     }
 
-    public Artist getMatchedArtist() {
-        return mMatchedArtist;
-    }
-
-    public void setMatchedArtist(final Artist artist) {
-        mMatchedArtist = artist;
-    }
-
     public String getAlbum() {
         return mAlbum;
     }
 
     public void setAlbum(final String album) {
         mAlbum = album;
-    }
-
-    public Album getMatchedAlbum() {
-        return mMatchedAlbum;
-    }
-
-    public void setMatchedAlbum(final Album album) {
-        mMatchedAlbum = album;
     }
 
     public int getYear() {
@@ -92,22 +70,18 @@ public class Song implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeValue(mProvider);
+        out.writeString(mRef);
         out.writeString(mTitle);
         out.writeString(mArtist);
         out.writeString(mAlbum);
         out.writeInt(mYear);
-        out.writeValue(mMatchedArtist);
-        out.writeValue(mMatchedAlbum);
     }
 
     public void readFromParcel(Parcel in) {
-        mProvider = (IMusicProvider) in.readValue(IMusicProvider.class.getClassLoader());
+        mRef = in.readString();
         mTitle = in.readString();
         mArtist = in.readString();
         mAlbum = in.readString();
         mYear = in.readInt();
-        mMatchedArtist = (Artist) in.readValue(Artist.class.getClassLoader());
-        mMatchedAlbum = (Album) in.readValue(Album.class.getClassLoader());
     }
 }
