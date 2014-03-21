@@ -5,7 +5,16 @@ import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
 
-interface IProviderUpdateCallback {
+interface IProviderCallback {
+
+    /**
+     * Called by the provider when a feedback is available about a login request
+     *
+     * @param success Whether or not the login succeeded
+     */
+    void onLoggedIn(boolean request);
+
+    void onLoggedOut();
 
     void onSongUpdate(in Song s);
 
