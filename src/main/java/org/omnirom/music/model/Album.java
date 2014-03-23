@@ -34,6 +34,10 @@ public class Album implements Parcelable {
         readFromParcel(in);
     }
 
+    public String getRef() {
+        return mRef;
+    }
+
     public String getName() {
         return mName;
     }

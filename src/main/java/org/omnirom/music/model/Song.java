@@ -31,6 +31,10 @@ public class Song implements Parcelable {
         mRef = ref;
     }
 
+    public String getRef() {
+        return mRef;
+    }
+
     public String getTitle() {
         return mTitle;
     }

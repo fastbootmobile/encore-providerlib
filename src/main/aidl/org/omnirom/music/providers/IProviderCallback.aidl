@@ -5,6 +5,8 @@ import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
 
+import org.omnirom.music.providers.IMusicProvider;
+
 interface IProviderCallback {
 
     /**
@@ -12,33 +14,33 @@ interface IProviderCallback {
      *
      * @param success Whether or not the login succeeded
      */
-    void onLoggedIn(boolean request);
+    void onLoggedIn(IMusicProvider provider, boolean request);
 
     /**
      * Called by the provider when the user login has expired, or has been kicked.
      */
-    void onLoggedOut();
+    void onLoggedOut(IMusicProvider provider);
 
     /**
      * Called by the provider when a Playlist has been added or updated. The app's provider
      * syndicator will automatically update the local cache of playlists based on the playlist
      * name.
      */
-    void onPlaylistAddedOrUpdated(in Playlist p);
+    void onPlaylistAddedOrUpdated(IMusicProvider provider, in Playlist p);
 
     /**
      * Called by the provider when the details of a song have been updated.
      */
-    void onSongUpdate(in Song s);
+    void onSongUpdate(IMusicProvider provider, in Song s);
 
     /**
      * Called by the provider when the details of an album have been updated.
      */
-    void onAlbumUpdate(in Album a);
+    void onAlbumUpdate(IMusicProvider provider, in Album a);
 
     /**
      * Called by the provider when the details of an artist have been updated.
      */
-    void onArtistUpdate(in Artist a);
+    void onArtistUpdate(IMusicProvider provider, in Artist a);
 
 }

@@ -32,6 +32,10 @@ public class Playlist implements Parcelable {
         mSongs = new ArrayList<String>();
     }
 
+    public String getRef() {
+        return mRef;
+    }
+
     public void setName(String name) {
         mName = name;
     }
@@ -52,7 +56,7 @@ public class Playlist implements Parcelable {
         mSongs.remove(i);
     }
 
-    public Iterator<String> iterator() {
+    public Iterator<String> songs() {
         return mSongs.iterator();
     }
 

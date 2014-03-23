@@ -30,6 +30,10 @@ public class Artist implements Parcelable {
         mRef = ref;
     }
 
+    public String getRef() {
+        return mRef;
+    }
+
     public void setName(String name) {
         mName = name;
     }
@@ -42,7 +46,7 @@ public class Artist implements Parcelable {
         mAlbums.add(a);
     }
 
-    public Iterator<String> getAlbums() {
+    public Iterator<String> albums() {
         return mAlbums.iterator();
     }
 
