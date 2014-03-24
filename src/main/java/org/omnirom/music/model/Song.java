@@ -1,12 +1,8 @@
 package org.omnirom.music.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
-import org.omnirom.music.providers.IMusicProvider;
-
-public class Song implements Parcelable {
-    private String mRef;
+public class Song extends BoundEntity {
     private String mTitle;
     private String mArtist;
     private String mAlbum;
@@ -24,15 +20,12 @@ public class Song implements Parcelable {
             };
 
     public Song(final Parcel in) {
-        readFromParcel(in);
+        super(in);
     }
+
 
     public Song(String ref) {
-        mRef = ref;
-    }
-
-    public String getRef() {
-        return mRef;
+        super(ref);
     }
 
     public String getTitle() {
@@ -68,13 +61,8 @@ public class Song implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(mRef);
+        super.writeToParcel(out, flags);
         out.writeString(mTitle);
         out.writeString(mArtist);
         out.writeString(mAlbum);
@@ -82,7 +70,7 @@ public class Song implements Parcelable {
     }
 
     public void readFromParcel(Parcel in) {
-        mRef = in.readString();
+        super.readFromParcel(in);
         mTitle = in.readString();
         mArtist = in.readString();
         mAlbum = in.readString();

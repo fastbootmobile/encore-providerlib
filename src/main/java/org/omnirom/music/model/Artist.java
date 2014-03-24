@@ -1,14 +1,13 @@
 package org.omnirom.music.model;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Artist implements Parcelable {
+public class Artist extends BoundEntity {
     private String mName;
-    private String mRef;
     private List<String> mAlbums;
 
     public static final Creator<Artist> CREATOR = new
@@ -22,16 +21,13 @@ public class Artist implements Parcelable {
                 }
             };
 
-    private Artist(final Parcel in) {
-        readFromParcel(in);
+    public Artist(final Parcel in) {
+        super(in);
     }
 
-    private Artist(final String ref) {
-        mRef = ref;
-    }
-
-    public String getRef() {
-        return mRef;
+    public Artist(final String ref) {
+        super(ref);
+        mAlbums = new ArrayList<String>();
     }
 
     public void setName(String name) {
@@ -51,19 +47,14 @@ public class Artist implements Parcelable {
     }
 
     @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
     public void writeToParcel(Parcel out, int flags) {
-        out.writeString(mRef);
+        super.writeToParcel(out, flags);
         out.writeString(mName);
         out.writeList(mAlbums);
     }
 
     public void readFromParcel(Parcel in) {
-        mRef = in.readString();
+        super.readFromParcel(in);
         mName = in.readString();
         mAlbums = in.readArrayList(String.class.getClassLoader());
     }
