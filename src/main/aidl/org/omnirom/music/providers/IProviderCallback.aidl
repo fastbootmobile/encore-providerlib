@@ -14,7 +14,7 @@ interface IProviderCallback {
      *
      * @param success Whether or not the login succeeded
      */
-    void onLoggedIn(IMusicProvider provider, boolean request);
+    void onLoggedIn(IMusicProvider provider, boolean success);
 
     /**
      * Called by the provider when the user login has expired, or has been kicked.
