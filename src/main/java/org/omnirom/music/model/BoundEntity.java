@@ -6,21 +6,10 @@ import android.os.Parcelable;
 /**
  *
  */
-public class BoundEntity implements Parcelable {
+public abstract class BoundEntity implements Parcelable {
 
     private String mRef;
     private boolean mIsLoaded;
-
-    public static final Creator<BoundEntity> CREATOR = new
-            Creator<BoundEntity>() {
-                public BoundEntity createFromParcel(Parcel in) {
-                    return new BoundEntity(in);
-                }
-
-                public BoundEntity[] newArray(int size) {
-                    return new BoundEntity[size];
-                }
-            };
 
     public BoundEntity(final String ref) {
         mRef = ref;
@@ -56,5 +45,33 @@ public class BoundEntity implements Parcelable {
     public void readFromParcel(Parcel in) {
         mRef = in.readString();
         mIsLoaded = in.readInt() == 1;
+    }
+
+    /**
+     * Returns whether or not the entities are identical, in that the content of the entity is
+     * exactly the same (ie. has exactly the same contents) as the one passed in parameter.
+     *
+     * @param other The other object to compare with
+     *
+     * @return true if both objects are exactly the same
+     */
+    public abstract boolean isIdentical(Object other);
+
+    /**
+     * Returns whether or not the entities are similar in that their reference is identical.
+     * To check for a more in-depth identity, use {@link #isIdentical(Object)}
+     * @param o
+     *            the object to compare this instance with.
+     * @return true if the references are identical
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof BoundEntity) {
+            BoundEntity ent = (BoundEntity) o;
+            return mRef.equals(ent.getRef());
+        } else {
+            return false;
+        }
+
     }
 }

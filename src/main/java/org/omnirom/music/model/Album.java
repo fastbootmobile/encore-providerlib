@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Album extends BoundEntity {
-    private List<Song> mSongs;
+    private List<String> mSongs;
     private String mName;
 
     public static final Creator<Album> CREATOR = new
@@ -27,7 +27,7 @@ public class Album extends BoundEntity {
 
     public Album(final String ref) {
         super(ref);
-        mSongs = new ArrayList<Song>();
+        mSongs = new ArrayList<String>();
     }
 
     public void setName(String name) {
@@ -38,12 +38,41 @@ public class Album extends BoundEntity {
         return mName;
     }
 
-    public void addSong(Song s) {
+    public void addSong(String s) {
         mSongs.add(s);
     }
 
-    public Iterator<Song> songs() {
+    public Iterator<String> songs() {
         return mSongs.iterator();
+    }
+
+    public int getSongsCount() { return mSongs.size(); }
+
+    @Override
+    public boolean isIdentical(Object other) {
+        if (other instanceof Album) {
+            Album remote = (Album) other;
+            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+                Iterator<String> remoteSongs = remote.songs();
+                Iterator<String> ourSongs = songs();
+
+                while (remoteSongs.hasNext()) {
+                    String next = remoteSongs.next();
+
+                    if (!ourSongs.hasNext()) {
+                        return false;
+                    } else if (!ourSongs.next().equals(next)) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -56,6 +85,6 @@ public class Album extends BoundEntity {
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mName = in.readString();
-        mSongs = in.readArrayList(Song.class.getClassLoader());
+        mSongs = in.readArrayList(String.class.getClassLoader());
     }
 }

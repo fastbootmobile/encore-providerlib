@@ -47,6 +47,33 @@ public class Artist extends BoundEntity {
     }
 
     @Override
+    public boolean isIdentical(Object other) {
+        if (other instanceof Artist) {
+            Artist remote = (Artist) other;
+            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+                Iterator<String> remoteSongs = remote.albums();
+                Iterator<String> ourSongs = albums();
+
+                while (remoteSongs.hasNext()) {
+                    String next = remoteSongs.next();
+
+                    if (!ourSongs.hasNext()) {
+                        return false;
+                    } else if (!ourSongs.next().equals(next)) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);
         out.writeString(mName);

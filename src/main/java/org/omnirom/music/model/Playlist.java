@@ -53,6 +53,35 @@ public class Playlist extends BoundEntity {
         return mSongs.iterator();
     }
 
+    public int getSongsCount() { return mSongs.size(); }
+
+    @Override
+    public boolean isIdentical(Object other) {
+        if (other instanceof Playlist) {
+            Playlist remote = (Playlist) other;
+            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+                Iterator<String> remoteSongs = remote.songs();
+                Iterator<String> ourSongs = songs();
+
+                while (remoteSongs.hasNext()) {
+                    String next = remoteSongs.next();
+
+                    if (!ourSongs.hasNext()) {
+                        return false;
+                    } else if (!ourSongs.next().equals(next)) {
+                        return false;
+                    }
+                }
+            } else {
+                return false;
+            }
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public void writeToParcel(Parcel out, int flags) {
         super.writeToParcel(out, flags);

@@ -2,6 +2,8 @@ package org.omnirom.music.model;
 
 import android.os.Parcel;
 
+import java.util.Iterator;
+
 public class Song extends BoundEntity {
     private String mTitle;
     private String mArtist;
@@ -58,6 +60,22 @@ public class Song extends BoundEntity {
 
     public void setYear(final int year) {
         mYear = year;
+    }
+
+    @Override
+    public boolean isIdentical(Object other) {
+        if (other instanceof Song) {
+            Song remote = (Song) other;
+            return (
+                    remote.getRef().equals(getRef()) &&
+                            remote.getAlbum().equals(getAlbum()) &&
+                            remote.getArtist().equals(getArtist()) &&
+                            remote.getTitle().equals(getTitle()) &&
+                            remote.getYear() == getYear()
+                    );
+        } else {
+            return false;
+        }
     }
 
     @Override
