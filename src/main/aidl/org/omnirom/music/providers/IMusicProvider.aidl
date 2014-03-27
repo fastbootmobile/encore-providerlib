@@ -103,5 +103,41 @@ interface IMusicProvider {
      */
     List<Playlist> getPlaylists();
 
+    /**
+     * Returns a particular song
+     * The provider may not return all the information immediately, and must set the IsLoaded
+     * flag accordingly.
+     * Song information should be then updated with onSongUpdate callback.
+     * It must not return null however.
+     *
+     * @param ref The reference of the song
+     */
+    Song getSong(String ref);
+
+    /**
+     * Returns the time, in milliseconds, the providers needs a call to prefetchSong() before the
+     * end of the current song.
+     * For instance, a cloud provider might need more time to prepare a song than a local provider
+     * to ensure smooth and gapless playback.
+     */
+    long getPrefetchDelay();
+
+    /**
+     * Requests the provider to prepare the playback of a song (ie. start downloading it and/or
+     * caching it in RAM), as it is likely the next song to be played.
+     * Providers may choose to implement or not this method - it is called by the app so that
+     * the provider can prepare the next song, but no particular result is expected.
+     *
+     * @param ref The unique reference of the song
+     */
+    void prefetchSong(String ref);
+
+    /**
+     * Requests the provider to play the song referenced by the provided ref string.
+     *
+     * @param ref The unique reference of the song
+     * @return false in case of error, otherwise true
+     */
+    boolean playSong(String ref);
 
 }
