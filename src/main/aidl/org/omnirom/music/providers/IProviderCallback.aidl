@@ -62,14 +62,4 @@ interface IProviderCallback {
      * Called by the provider when the playback has stopped
      */
     void onSongStopped(IMusicProvider provider);
-
-    /**
-     * Called by the provider when music data is available.
-     *
-     * @param frames The audio data, in short. Only INT16 LITTLE ENDIAN is supported for now,
-                     however the AIDL interface doesn't support 'short' arrays, thus an int is used.
-     * @param channels The number of channels, generally 1 (mono) or 2 (stereo)
-     * @param sampleRate The number of samples per seconds (Hz)
-     */
-    void onMusicData(in int[] frames, int frameCount, int channels, int sampleRate);
 }

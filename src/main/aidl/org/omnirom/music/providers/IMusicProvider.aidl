@@ -115,6 +115,19 @@ interface IMusicProvider {
     Song getSong(String ref);
 
     /**
+     * Tells the provider the name of the local audio socket to use to push data. This string
+     * should be passed to AudioSocket in order to push audio to the proper location. The app
+     * manages audio crossfading and properly locks each socket to ensure a smooth playback
+     * between the various providers.
+     * The audio socket may change between the playback sessions, so the provider must handle
+     * switching audio socket on the fly, and re-send the format data before audio data. See
+     * the AudioSocket class for more information.
+     *
+     * @param socketName The name of the socket to use
+     */
+    void setAudioSocketName(String socketName);
+
+    /**
      * Returns the time, in milliseconds, the providers needs a call to prefetchSong() before the
      * end of the current song.
      * For instance, a cloud provider might need more time to prepare a song than a local provider
