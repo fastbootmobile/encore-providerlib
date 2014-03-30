@@ -39,8 +39,6 @@ public class AudioSocket {
         mSocket = new LocalSocket();
         mSocket.connect(new LocalSocketAddress(socketName));
         mOutStream = mSocket.getOutputStream();
-        Log.e(TAG, "Connected the socket to host app");
-        writeFormatData(2, 44100);
     }
 
     @Override
