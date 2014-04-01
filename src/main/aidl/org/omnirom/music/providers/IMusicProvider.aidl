@@ -5,6 +5,7 @@ import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
 import org.omnirom.music.providers.IProviderCallback;
+import org.omnirom.music.providers.ProviderIdentifier;
 
 /**
  * This interface represents a music provider and must be implemented as the binder of a service
@@ -20,6 +21,12 @@ interface IMusicProvider {
      * The current API version is: 1
      */
     int getVersion();
+
+    /**
+     * Sets the Provider Identifier for this provider. The service must retain this identifier
+     * and pass it on every callback
+     */
+    void setIdentifier(in ProviderIdentifier identifier);
 
     /**
      * Register a callback for the app to be notified of events. Remember that the providers calls

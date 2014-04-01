@@ -1,4 +1,4 @@
-package org.omnirom.music.provider;
+package org.omnirom.music.providers;
 
 public class Constants {
 
@@ -9,14 +9,14 @@ public class Constants {
     public static final String ACTION_PICK_PROVIDER = "org.omnirom.music.action.PICK_PROVIDER";
 
     /**
-     * For a provider to be valid, it MUST have a meta-data presenting the name of the provider
+     * For a providers to be valid, it MUST have a meta-data presenting the name of the providers
      * it represents (e.g. "Deezer", "Spotify", etc).
      */
     public static final String METADATA_PROVIDER_NAME = "org.omnirom.music.metadata.PROVIDER_NAME";
 
     /**
-     * A provider MAY have a configuration activity to setup the user account (e.g. in case the
-     * provider needs a login/password). This meta-data value should be the activity class name.
+     * A providers MAY have a configuration activity to setup the user account (e.g. in case the
+     * providers needs a login/password). This meta-data value should be the activity class name.
      */
     public static final String METADATA_CONFIG_CLASS = "org.omnirom.music.metadata.CONFIG_CLASS";
 }

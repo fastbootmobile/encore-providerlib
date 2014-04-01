@@ -2,6 +2,8 @@ package org.omnirom.music.model;
 
 import android.os.Parcel;
 
+import org.omnirom.music.providers.ProviderIdentifier;
+
 import java.util.Iterator;
 
 public class Song extends BoundEntity {
@@ -9,6 +11,7 @@ public class Song extends BoundEntity {
     private String mArtist;
     private String mAlbum;
     private int mYear;
+    private ProviderIdentifier mProvider;
 
     public static final Creator<Song> CREATOR = new
             Creator<Song>() {
@@ -28,6 +31,14 @@ public class Song extends BoundEntity {
 
     public Song(String ref) {
         super(ref);
+    }
+
+    public void setProvider(ProviderIdentifier id) {
+        mProvider = id;
+    }
+
+    public ProviderIdentifier getProvider() {
+        return mProvider;
     }
 
     public String getTitle() {
@@ -85,6 +96,7 @@ public class Song extends BoundEntity {
         out.writeString(mArtist);
         out.writeString(mAlbum);
         out.writeInt(mYear);
+        out.writeParcelable(mProvider, 0);
     }
 
     public void readFromParcel(Parcel in) {
@@ -93,5 +105,6 @@ public class Song extends BoundEntity {
         mArtist = in.readString();
         mAlbum = in.readString();
         mYear = in.readInt();
+        mProvider = in.readParcelable(ProviderIdentifier.class.getClassLoader());
     }
 }

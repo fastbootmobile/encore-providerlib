@@ -1,16 +1,11 @@
-package org.omnirom.music.provider;
+package org.omnirom.music.providers;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
-import android.util.Log;
 
-import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import java.nio.ShortBuffer;
 
 /**
  *
@@ -94,7 +89,7 @@ public class AudioSocket {
         if (numFrames > 0) {
             mOutStream.write(OPCODE_DATA);
             mIntBuffer.rewind();
-            mIntBuffer.putInt(numFrames);
+            mIntBuffer.putInt(numFrames * 2);
             mOutStream.write(mIntBuffer.array());
 
             mSamplesBuffer.rewind();
