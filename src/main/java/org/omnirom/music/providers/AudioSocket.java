@@ -2,6 +2,8 @@ package org.omnirom.music.providers;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
+import android.os.SystemClock;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -89,13 +91,12 @@ public class AudioSocket {
         if (numFrames > 0) {
             mOutStream.write(OPCODE_DATA);
             mIntBuffer.rewind();
-            mIntBuffer.putInt(numFrames * 2);
+            mIntBuffer.putInt(numFrames);
             mOutStream.write(mIntBuffer.array());
 
             mSamplesBuffer.rewind();
-            for (int i = 0; i < numFrames; i++) {
-                mSamplesBuffer.putShort(frames[i]);
-            }
+            mSamplesBuffer.asShortBuffer().put(frames, 0, numFrames);
+
             mOutStream.write(mSamplesBuffer.array(), 0, numFrames * 2);
 
             mOutStream.flush();
