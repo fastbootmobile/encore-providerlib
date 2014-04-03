@@ -4,14 +4,13 @@ import android.os.Parcel;
 
 import org.omnirom.music.providers.ProviderIdentifier;
 
-import java.util.Iterator;
-
 public class Song extends BoundEntity {
     private String mTitle;
     private String mArtist;
     private String mAlbum;
     private int mYear;
     private ProviderIdentifier mProvider;
+    private int mDurationMillis;
 
     public static final Creator<Song> CREATOR = new
             Creator<Song>() {
@@ -73,6 +72,14 @@ public class Song extends BoundEntity {
         mYear = year;
     }
 
+    public int getDuration() {
+        return mDurationMillis;
+    }
+
+    public void setDuration(int millis) {
+        mDurationMillis = millis;
+    }
+
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Song) {
@@ -82,7 +89,8 @@ public class Song extends BoundEntity {
                             remote.getAlbum().equals(getAlbum()) &&
                             remote.getArtist().equals(getArtist()) &&
                             remote.getTitle().equals(getTitle()) &&
-                            remote.getYear() == getYear()
+                            remote.getYear() == getYear() &&
+                            remote.getDuration() == getDuration()
                     );
         } else {
             return false;
@@ -96,6 +104,7 @@ public class Song extends BoundEntity {
         out.writeString(mArtist);
         out.writeString(mAlbum);
         out.writeInt(mYear);
+        out.writeInt(mDurationMillis);
         out.writeParcelable(mProvider, 0);
     }
 
@@ -105,6 +114,7 @@ public class Song extends BoundEntity {
         mArtist = in.readString();
         mAlbum = in.readString();
         mYear = in.readInt();
+        mDurationMillis = in.readInt();
         mProvider = in.readParcelable(ProviderIdentifier.class.getClassLoader());
     }
 }
