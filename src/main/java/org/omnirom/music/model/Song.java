@@ -86,6 +86,7 @@ public class Song extends BoundEntity {
             Song remote = (Song) other;
             return (
                     remote.getRef().equals(getRef()) &&
+                            remote.isLoaded() == isLoaded() &&
                             remote.getAlbum().equals(getAlbum()) &&
                             remote.getArtist().equals(getArtist()) &&
                             remote.getTitle().equals(getTitle()) &&
