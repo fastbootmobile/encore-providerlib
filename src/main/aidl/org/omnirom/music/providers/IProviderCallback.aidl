@@ -37,6 +37,10 @@ interface IProviderCallback {
 
     /**
      * Called by the provider when the details of an album have been updated.
+     * Please note that while the app supports uploading multiple times the same album ref with
+     * different objects (the one with the most information/tracks will be kept), it is strongly
+     * encouraged for optimization purposes to pass the same Album objects for every call to update
+     * (unless of course it is a new album).
      * @param a The album that has been updated
      */
     void onAlbumUpdate(in ProviderIdentifier provider, in Album a);

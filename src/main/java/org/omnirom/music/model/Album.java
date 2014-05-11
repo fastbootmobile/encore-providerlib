@@ -6,8 +6,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Represents an Album (release)
+ */
 public class Album extends BoundEntity {
+    /**
+     * A list of songs, in the order of the album
+     */
     private List<String> mSongs;
+
+    /**
+     * The name of the album
+     */
     private String mName;
 
     public static final Creator<Album> CREATOR = new
@@ -30,22 +40,42 @@ public class Album extends BoundEntity {
         mSongs = new ArrayList<String>();
     }
 
+    /**
+     * Sets the name of the album
+     * @param name The name of the album
+     */
     public void setName(String name) {
         mName = name;
     }
 
+    /**
+     * Returns the name of the album
+     * @return The name of the album, or null if it hasn't been set by the provider
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * Adds a song to this album. Please note that songs must be added in order.
+     * @param s The reference String of the song to add
+     */
     public void addSong(String s) {
         mSongs.add(s);
     }
 
+    /**
+     * Returns an iterator of the songs references of this album, in order.
+     * @return A String Iterator
+     */
     public Iterator<String> songs() {
         return mSongs.iterator();
     }
 
+    /**
+     * Returns the number of songs in this album
+     * @return The number of songs in this album
+     */
     public int getSongsCount() { return mSongs.size(); }
 
     @Override

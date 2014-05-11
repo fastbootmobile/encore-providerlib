@@ -6,8 +6,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Class representing an Artist (bands, etc).
+ */
 public class Artist extends BoundEntity {
+    /**
+     * The name of the artist
+     */
     private String mName;
+
+    /**
+     * The list of albums of this artist
+     */
     private List<String> mAlbums;
 
     public static final Creator<Artist> CREATOR = new
@@ -30,14 +40,26 @@ public class Artist extends BoundEntity {
         mAlbums = new ArrayList<String>();
     }
 
+    /**
+     * Sets the name of this artist
+     * @param name The name of the artist
+     */
     public void setName(String name) {
         mName = name;
     }
 
+    /**
+     * Returns the name of the artist
+     * @return The name of the artist, or null if none has been set
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * Adds an album that belongs to this artist
+     * @param a The string reference of the album to add
+     */
     public void addAlbum(String a) {
         mAlbums.add(a);
     }

@@ -128,7 +128,7 @@ interface IMusicProvider {
      * between the various providers.
      * The audio socket may change between the playback sessions, so the provider must handle
      * switching audio socket on the fly, and re-send the format data before audio data. See
-     * the AudioSocket class for more information.
+     * the org.omnirom.music.providers.AudioSocket class for more information.
      *
      * @param socketName The name of the socket to use
      */
