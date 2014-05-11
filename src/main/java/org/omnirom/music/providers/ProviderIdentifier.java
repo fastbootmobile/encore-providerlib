@@ -37,10 +37,6 @@ public class ProviderIdentifier implements Parcelable {
     public boolean equals(Object obj) {
         if (obj instanceof ProviderIdentifier) {
             ProviderIdentifier o = (ProviderIdentifier) obj;
-
-            Log.e(TAG, "equals? " + mPackage + "==" + o.mPackage + "; " + mName + "==" + o.mName + "; " +
-                    mService + "==" + o.mService);
-
             return (this.mPackage.equals(o.mPackage) && this.mName.equals(o.mName)
                     && this.mService.equals(o.mService));
         } else {
