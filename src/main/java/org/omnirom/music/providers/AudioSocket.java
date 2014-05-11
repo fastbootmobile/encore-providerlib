@@ -82,6 +82,10 @@ public class AudioSocket {
      * @throws IOException
      */
     public void writeAudioData(short[] frames, int numFrames) throws IOException {
+        if (numFrames > mSamplesBuffer.capacity()) {
+            throw new IllegalArgumentException("You must not pass more than " +
+                    mSamplesBuffer.capacity() + " samples at a time");
+        }
         /**
          * Audio data packet:
          * OPCODE_DATA      [byte]
