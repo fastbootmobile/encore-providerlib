@@ -4,6 +4,7 @@ import android.os.Parcel;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class Playlist extends BoundEntity {
     private ArrayList<String> mSongs;
@@ -52,6 +53,8 @@ public class Playlist extends BoundEntity {
     public Iterator<String> songs() {
         return mSongs.iterator();
     }
+
+    public List<String> songsList() {return mSongs;}
 
     public int getSongsCount() { return mSongs.size(); }
 

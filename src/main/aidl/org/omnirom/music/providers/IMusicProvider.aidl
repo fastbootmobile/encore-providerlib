@@ -160,4 +160,11 @@ interface IMusicProvider {
      */
     boolean playSong(String ref);
 
+    /**
+    * Requests the provider to update an existing playlist with the songs provided by the songlist
+    *
+    * @param ref the unique reference to the playlist
+    * return true if the change is saved
+    */
+    boolean onUserSwapPlaylistItem(int oldPosition, int newPosition, String playlistRef);
 }
