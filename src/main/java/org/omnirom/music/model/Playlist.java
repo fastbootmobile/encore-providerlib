@@ -92,6 +92,9 @@ public class Playlist extends BoundEntity {
         out.writeList(mSongs);
     }
 
+    public void setSong(int pos,String s){
+        mSongs.set(pos,s);
+    }
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mName = in.readString();
