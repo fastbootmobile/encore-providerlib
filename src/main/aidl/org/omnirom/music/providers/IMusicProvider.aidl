@@ -163,8 +163,34 @@ interface IMusicProvider {
     /**
     * Requests the provider to update an existing playlist with the songs provided by the songlist
     *
-    * @param ref the unique reference to the playlist
-    * return true if the change is saved
+    * @param ref the unique reference of the playlist
+    * @return true if the change is saved
     */
     boolean onUserSwapPlaylistItem(int oldPosition, int newPosition, String playlistRef);
+
+    /**
+    * Requests the provider to delete a playlist
+    * @param ref the unique reference of the playlist
+    * @return true if the playlist is deleted
+    */
+    boolean deletePlaylist(String playlistRef);
+
+    /**
+    * Requests the provider to delete a song of a playlist
+    * @param ref the unique reference of the playlist
+    * @return true if the song is deleted
+    */
+    boolean deleteSongFromPlaylist(int songPosition,String playlistRef);
+    /**
+    * Requests the provider to delete a song of a playlist
+    * @param ref the unique reference of the playlist
+    * @return true if the song is deleted
+    */
+    boolean addSongToPlaylist(String songRef,String playlistRef);
+    /**
+    * Requests the provider to add a playlist
+    * @param playlistName the name of the playlist
+    * @return true if the playlist is added
+    */
+    boolean addPlaylist(String playlistName);
 }
