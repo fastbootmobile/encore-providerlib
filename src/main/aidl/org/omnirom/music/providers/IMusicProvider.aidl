@@ -186,7 +186,7 @@ interface IMusicProvider {
     * @param ref the unique reference of the playlist
     * @return true if the song is deleted
     */
-    boolean addSongToPlaylist(String songRef,String playlistRef);
+    boolean addSongToPlaylist(String songRef,String playlistRef,in ProviderIdentifier providerIdentifier);
     /**
     * Requests the provider to add a playlist
     * @param playlistName the name of the playlist
