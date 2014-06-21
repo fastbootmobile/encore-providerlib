@@ -161,6 +161,16 @@ interface IMusicProvider {
     boolean playSong(String ref);
 
     /**
+     * Requests the provider to pause the currently playing song
+     */
+    void pause();
+
+    /**
+     * Requests the provider to resume playing the song that was paused, if any
+     */
+    void resume();
+
+    /**
     * Requests the provider to update an existing playlist with the songs provided by the songlist
     *
     * @param ref the unique reference of the playlist
