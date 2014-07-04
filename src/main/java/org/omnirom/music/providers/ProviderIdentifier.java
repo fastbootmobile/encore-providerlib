@@ -11,7 +11,7 @@ public class ProviderIdentifier implements Parcelable {
     public String mPackage;
     public String mService;
     public String mName;
-
+    public Boolean isMultiProviderIdentifier;
     public static final Parcelable.Creator<ProviderIdentifier> CREATOR = new
             Parcelable.Creator<ProviderIdentifier>() {
                 public ProviderIdentifier createFromParcel(Parcel in) {
@@ -31,8 +31,11 @@ public class ProviderIdentifier implements Parcelable {
         mPackage = pck;
         mService = service;
         mName = name;
+        isMultiProviderIdentifier = false;
     }
-
+    public void setMultiProviderMode(){
+        isMultiProviderIdentifier = true;
+    }
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ProviderIdentifier) {
