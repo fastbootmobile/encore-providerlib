@@ -200,7 +200,7 @@ interface IMusicProvider {
     /**
     * Requests the provider to add a playlist
     * @param playlistName the name of the playlist
-    * @return true if the playlist is added
+    * @return the unique reference to the playlist if it has been added, false if it has not
     */
-    boolean addPlaylist(String playlistName);
+    String addPlaylist(String playlistName);
 }
