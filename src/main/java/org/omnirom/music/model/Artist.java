@@ -58,10 +58,14 @@ public class Artist extends BoundEntity {
 
     /**
      * Adds an album that belongs to this artist
+     * Note that the application matches the albums' songs artist automatically in onAlbumUpdated
+     * callback so the provider isn't required to explicitly call addAlbum and maintain it.
      * @param a The string reference of the album to add
      */
     public void addAlbum(String a) {
-        mAlbums.add(a);
+        if (!mAlbums.contains(a)) {
+            mAlbums.add(a);
+        }
     }
 
     public Iterator<String> albums() {

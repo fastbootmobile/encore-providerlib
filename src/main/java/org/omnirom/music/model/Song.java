@@ -9,7 +9,6 @@ public class Song extends BoundEntity {
     private String mArtist;
     private String mAlbum;
     private int mYear;
-    private ProviderIdentifier mProvider;
     private int mDurationMillis;
 
     public static final Creator<Song> CREATOR = new
@@ -30,14 +29,6 @@ public class Song extends BoundEntity {
 
     public Song(String ref) {
         super(ref);
-    }
-
-    public void setProvider(ProviderIdentifier id) {
-        mProvider = id;
-    }
-
-    public ProviderIdentifier getProvider() {
-        return mProvider;
     }
 
     public String getTitle() {
@@ -106,7 +97,6 @@ public class Song extends BoundEntity {
         out.writeString(mAlbum);
         out.writeInt(mYear);
         out.writeInt(mDurationMillis);
-        out.writeParcelable(mProvider, 0);
     }
 
     public void readFromParcel(Parcel in) {
@@ -116,6 +106,5 @@ public class Song extends BoundEntity {
         mAlbum = in.readString();
         mYear = in.readInt();
         mDurationMillis = in.readInt();
-        mProvider = in.readParcelable(ProviderIdentifier.class.getClassLoader());
     }
 }
