@@ -4,6 +4,7 @@ import org.omnirom.music.model.Song;
 import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
+import org.omnirom.music.model.Genre;
 import org.omnirom.music.providers.IProviderCallback;
 import org.omnirom.music.providers.ProviderIdentifier;
 
@@ -110,6 +111,16 @@ interface IMusicProvider {
      */
     List<Playlist> getPlaylists();
 
+
+    /**
+    * Returns the list of all genre on this provider
+    * this method is valid for both infinite and finite providers, but the genre may
+    * have no songs if the provider is infinite
+    *
+    * @return A list of all genre on this provider
+    */
+    List<Genre> getGenres();
+
     /**
      * Returns a particular song
      * The provider may not return all the information immediately, and must set the IsLoaded
@@ -120,6 +131,13 @@ interface IMusicProvider {
      * @param ref The reference of the song
      */
     Song getSong(String ref);
+
+    /**
+     * Returns a bitmap for the song given
+     * @param song the song for which we want the bitmap
+     */
+    Bitmap getSongArt(in Song song);
+
 
     /**
      * Tells the provider the name of the local audio socket to use to push data. This string

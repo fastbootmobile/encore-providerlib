@@ -4,6 +4,8 @@ import org.omnirom.music.model.Song;
 import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
+import org.omnirom.music.model.Genre;
+
 
 import org.omnirom.music.providers.ProviderIdentifier;
 
@@ -50,6 +52,11 @@ interface IProviderCallback {
      * @param a The artist that has been updated
      */
     void onArtistUpdate(in ProviderIdentifier provider, in Artist a);
+    /**
+     * Called by the provider when the details of a genre have been updated.
+     * @param g The genre that has been updated
+     */
+     void onGenreUpdate(in ProviderIdentifier provider, in Genre g);
 
     /**
      * Called by the provider when a song starts playing
