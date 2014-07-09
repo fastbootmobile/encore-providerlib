@@ -72,6 +72,10 @@ public class Artist extends BoundEntity {
         return mAlbums.iterator();
     }
 
+    public List<String> getAlbums() {
+        return mAlbums;
+    }
+
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Artist) {
