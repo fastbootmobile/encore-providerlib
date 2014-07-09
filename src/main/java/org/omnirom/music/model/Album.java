@@ -20,6 +20,11 @@ public class Album extends BoundEntity {
      */
     private String mName;
 
+    /**
+     * The release year of the album
+     */
+    private int mYear;
+
     public static final Creator<Album> CREATOR = new
             Creator<Album>() {
                 public Album createFromParcel(Parcel in) {
@@ -78,6 +83,18 @@ public class Album extends BoundEntity {
      */
     public int getSongsCount() { return mSongs.size(); }
 
+    public void setYear(int year) {
+        mYear = year;
+    }
+
+    /**
+     * Returns the year of the album, or zero if not set
+     * @return A release year (e.g. 2007), or 0 if not set
+     */
+    public int getYear() {
+        return mYear;
+    }
+
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Album) {
@@ -110,11 +127,13 @@ public class Album extends BoundEntity {
         super.writeToParcel(out, flags);
         out.writeString(mName);
         out.writeList(mSongs);
+        out.writeInt(mYear);
     }
 
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mName = in.readString();
         mSongs = in.readArrayList(String.class.getClassLoader());
+        mYear = in.readInt();
     }
 }
