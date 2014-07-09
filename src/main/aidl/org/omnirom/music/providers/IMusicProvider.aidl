@@ -81,7 +81,9 @@ interface IMusicProvider {
 
     /**
      * Returns the list of all albums
-     * This method call is only valid when isInfinite returns false
+     * This method call is only valid when isInfinite returns false. Infinite providers should
+     * notify of album information in the onAlbumUpdate callback whenever the information is
+     * available, or when requested through fetchArtistAlbums()
      *
      * @return A list of all the albums available on the provider
      */
@@ -133,10 +135,26 @@ interface IMusicProvider {
     Song getSong(String ref);
 
     /**
-     * Returns a bitmap for the song given
+     * Returns a bitmap for the song given. This method isn't mandatory and may return null at
+     * all times if the provider isn't capable of returning a song art
+     *
      * @param song the song for which we want the bitmap
      */
     Bitmap getSongArt(in Song song);
+
+
+    /**
+     * Requests the provider to fetch the albums of the provided artist reference. This method
+     * is generally only useful for infinite providers where they can't provide a consistent
+     * list of albums in getAlbums() (because there are too much of them).
+     * If applicable, the provider should send the albums in the onAlbumUpdate callback when
+     * the data is available.
+     *
+     * @param artistRef The reference of the artist whom we want the albums
+     * @return true if there are albums loading, false if none is available or everything is loaded
+     *         (this is used by the app's UI to display a loading spinner)
+     */
+    boolean fetchArtistAlbums(String artistRef);
 
 
     /**

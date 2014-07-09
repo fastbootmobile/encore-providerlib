@@ -50,8 +50,8 @@ public class AudioSocket {
     /**
      * Notifies the main app of the format data. This should be called once per song (on playback
      * start for instance), to make sure the main app is running the output at the proper format.
-     * @param channels
-     * @param sampleRate
+     * @param channels The number of audio channels (generally 2 for stereo)
+     * @param sampleRate The sample rate of the audio (generally 44100)
      * @throws IOException
      */
     public void writeFormatData(int channels, int sampleRate) throws IOException {
