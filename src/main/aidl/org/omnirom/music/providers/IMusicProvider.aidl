@@ -253,4 +253,11 @@ interface IMusicProvider {
     * @return the unique reference to the playlist if it has been added, false if it has not
     */
     String addPlaylist(String playlistName);
+
+
+    /**
+    * Request the provider to search songs, playlists, artists and albums
+    * @param query the name to search
+    */
+    void startSearch(String query);
 }

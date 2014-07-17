@@ -5,6 +5,7 @@ import org.omnirom.music.model.Album;
 import org.omnirom.music.model.Playlist;
 import org.omnirom.music.model.Artist;
 import org.omnirom.music.model.Genre;
+import org.omnirom.music.model.SearchResult;
 
 
 import org.omnirom.music.providers.ProviderIdentifier;
@@ -71,6 +72,14 @@ interface IProviderCallback {
     /**
      * Called by the provider when the currently playing track ended
      */
+<<<<<<< HEAD
     void onTrackEnded(in ProviderIdentifier provider);
 
+=======
+    void onSongStopped(in ProviderIdentifier provider);
+    /**
+     *
+     */
+    void onSearchResult(in SearchResult searchResult);
+>>>>>>> added search capabilities
 }
