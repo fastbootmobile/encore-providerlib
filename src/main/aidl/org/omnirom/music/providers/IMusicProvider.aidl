@@ -156,6 +156,20 @@ interface IMusicProvider {
      */
     boolean fetchArtistAlbums(String artistRef);
 
+    /**
+     * Requests the provider to fetch the tracks of the provided album reference. This method is
+     * generally only useful for infinite provider where they can't provide all the tracks of all
+     * the albums loaded (because there are too much of them, or they would cause an infinite load
+     * loop).
+     * If applicable, the provider should send the tracks in the onAlbumUpdate callback when
+     * the data is available.
+     *
+     * @param albumRef The reference of the album whom we want the tracks
+     * @return true if there are tracks loading, false if all the tracks are already populated
+     *              (this is used by the app's UI to display a loading spinner)
+     */
+    boolean fetchAlbumTracks(String albumRef);
+
 
     /**
      * Tells the provider the name of the local audio socket to use to push data. This string
