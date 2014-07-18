@@ -70,7 +70,8 @@ interface IProviderCallback {
     void onSongPaused(in ProviderIdentifier provider);
 
     /**
-     * Called by the provider when the playback has stopped
+     * Called by the provider when the currently playing track ended
      */
-    void onSongStopped(in ProviderIdentifier provider);
+    void onTrackEnded(in Song s, in ProviderIdentifier provider);
+
 }
