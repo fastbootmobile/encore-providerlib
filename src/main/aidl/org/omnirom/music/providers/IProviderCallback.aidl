@@ -60,9 +60,8 @@ interface IProviderCallback {
 
     /**
      * Called by the provider when a song starts playing
-     * @param s The song that started playing
      */
-    void onSongPlaying(in ProviderIdentifier provider, in Song s);
+    void onSongPlaying(in ProviderIdentifier provider);
 
     /**
      * Called by the provider when the playback has been paused
@@ -72,6 +71,6 @@ interface IProviderCallback {
     /**
      * Called by the provider when the currently playing track ended
      */
-    void onTrackEnded(in Song s, in ProviderIdentifier provider);
+    void onTrackEnded(in ProviderIdentifier provider);
 
 }
