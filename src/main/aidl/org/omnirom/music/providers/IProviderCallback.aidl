@@ -72,14 +72,14 @@ interface IProviderCallback {
     /**
      * Called by the provider when the currently playing track ended
      */
-<<<<<<< HEAD
+
     void onTrackEnded(in ProviderIdentifier provider);
 
-=======
+
     void onSongStopped(in ProviderIdentifier provider);
     /**
      *
      */
     void onSearchResult(in SearchResult searchResult);
->>>>>>> added search capabilities
+
 }
