@@ -75,8 +75,6 @@ interface IProviderCallback {
 
     void onTrackEnded(in ProviderIdentifier provider);
 
-
-    void onSongStopped(in ProviderIdentifier provider);
     /**
      *
      */
