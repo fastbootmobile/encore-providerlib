@@ -66,7 +66,7 @@ public class Album extends BoundEntity {
      * @param s The reference String of the song to add
      */
     public void addSong(String s) {
-        mSongs.add(s);
+        if( !mSongs.contains(s)) mSongs.add(s);
     }
 
     /**
