@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
@@ -21,8 +22,10 @@ public class AudioSocket {
 
     private LocalSocket mSocket;
     private OutputStream mOutStream;
+    private InputStream mInStream;
     private ByteBuffer mIntBuffer;
     private ByteBuffer mSamplesBuffer;
+    private short[] mSamplesShortBuffer = new short[262144];
 
     /**
      * Creates and connect the audio socket to the main app. In case the main app is down or hasn't
@@ -31,11 +34,12 @@ public class AudioSocket {
      */
     public AudioSocket(final String socketName) throws IOException {
         mIntBuffer = ByteBuffer.allocateDirect(4);
-        mSamplesBuffer = ByteBuffer.allocateDirect(65535 * 2);
+        mSamplesBuffer = ByteBuffer.allocateDirect(262144 * 2);
 
         mSocket = new LocalSocket();
         mSocket.connect(new LocalSocketAddress(socketName));
         mOutStream = mSocket.getOutputStream();
+        mInStream = mSocket.getInputStream();
     }
 
     @Override
@@ -104,6 +108,38 @@ public class AudioSocket {
             mOutStream.write(mSamplesBuffer.array(), 0, numFrames * 2);
 
             mOutStream.flush();
+        }
+    }
+
+    public short[] readAudioFrames() throws IOException {
+        if (mInStream.available() > 0) {
+            int opcode = mInStream.read();
+
+            if (mInStream.read(mIntBuffer.array(), 0, 4) != 4) {
+                Log.e(TAG, "Reading an int but read didn't return 4 bytes!");
+            }
+            final int numFrames = mIntBuffer.getInt(0);
+
+            final int totalToRead = numFrames * 2; // 1 short = 2 bytes
+            int totalRead = 0;
+            int sizeToRead = totalToRead;
+
+            while (totalRead < totalToRead) {
+                int read = mInStream.read(mSamplesBuffer.array(), totalRead, sizeToRead);
+                if (read >= 0) {
+                    totalRead += read;
+                }
+                sizeToRead = totalToRead - totalRead;
+            }
+
+            mSamplesBuffer.asShortBuffer().get(mSamplesShortBuffer);
+
+            short[] output = new short[numFrames];
+            System.arraycopy(mSamplesShortBuffer, 0, output, 0, numFrames);
+
+            return output;
+        } else {
+            return null;
         }
     }
 }
