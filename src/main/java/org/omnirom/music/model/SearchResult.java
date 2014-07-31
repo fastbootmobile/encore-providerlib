@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +29,10 @@ public class SearchResult implements Parcelable {
             };
     public SearchResult(final String query) {
         mQuery = query;
+        mSongsList = new ArrayList<String>();
+        mArtistList = new ArrayList<String>();
+        mAlbumsList = new ArrayList<String>();
+        mPlaylistList = new ArrayList<String>();
     }
 
     public SearchResult(final Parcel in) {
