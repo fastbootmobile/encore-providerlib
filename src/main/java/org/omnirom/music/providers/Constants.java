@@ -22,6 +22,13 @@ public class Constants {
     public static final String METADATA_PROVIDER_NAME = "org.omnirom.music.metadata.PROVIDER_NAME";
 
     /**
+     * For a provider to be valid, it MUST have a meta-data presenting the author of the plug-in,
+     * such as the company name or the author of the source code (e.g. "The OmniROM Project", or
+     * "XpLoDWilD").
+     */
+    public static final String METADATA_PROVIDER_AUTHOR = "org.omnirom.music.metadata.PROVIDER_AUTHOR";
+
+    /**
      * A provider MAY have a configuration activity to setup the user account (e.g. in case the
      * providers needs a login/password) for a music provider, or to setup the audio effect
      * parameter in case of a DSP provider. This meta-data value should be the activity class name.
