@@ -135,6 +135,39 @@ interface IMusicProvider {
     Song getSong(String ref);
 
     /**
+     * Returns a particular artist
+     * The provider may not return all the information immediately, and must set the IsLoaded
+     * flag accordingly.
+     * Artist information should be then updated with onArtistUpdate callback.
+     * It must not return null however.
+     *
+     * @param ref The reference of the artist
+     */
+    Artist getArtist(String ref);
+
+    /**
+     * Returns a particular album
+     * The provider may not return all the information immediately, and must set the IsLoaded
+     * flag accordingly.
+     * Album information should be then updated with onAlbumUpdate callback.
+     * It must not return null however.
+     *
+     * @param ref The reference of the album
+     */
+    Album getAlbum(String ref);
+
+    /**
+     * Returns a particular playlist
+     * The provider may not return all the information immediately, and must set the IsLoaded
+     * flag accordingly.
+     * Playlist information should be then updated with onPlaylistUpdate callback.
+     * It must not return null however.
+     *
+     * @param ref The reference of the playlist
+     */
+    Playlist getPlaylist(String ref);
+
+    /**
      * Returns a bitmap for the song given. This method isn't mandatory and may return null at
      * all times if the provider isn't capable of returning a song art
      *

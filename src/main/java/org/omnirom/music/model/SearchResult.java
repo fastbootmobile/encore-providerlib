@@ -2,7 +2,10 @@ package org.omnirom.music.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
+
+import org.omnirom.music.providers.ProviderIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,7 @@ public class SearchResult implements Parcelable {
     private List<String> mAlbumsList;
     private List<String> mArtistList;
     private List<String> mPlaylistList;
+    public ProviderIdentifier mIdentifier;
     public static final Creator<SearchResult> CREATOR = new
             Creator<SearchResult>() {
                 public SearchResult createFromParcel(Parcel in) {
@@ -37,6 +41,30 @@ public class SearchResult implements Parcelable {
 
     public SearchResult(final Parcel in) {
         readFromParcel(in);
+    }
+
+    public void setIdentifier(ProviderIdentifier id) {
+        mIdentifier = id;
+    }
+
+    public ProviderIdentifier getIdentifier() {
+        return mIdentifier;
+    }
+
+    public void addAlbum(String ref) {
+        mAlbumsList.add(ref);
+    }
+
+    public void addArtist(String ref) {
+        mArtistList.add(ref);
+    }
+
+    public void addPlaylist(String ref) {
+        mPlaylistList.add(ref);
+    }
+
+    public void addSong(String ref) {
+        mSongsList.add(ref);
     }
 
     public void setAlbumsList(List<String> albumsList) {
@@ -78,6 +106,7 @@ public class SearchResult implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel out, int flags) {
+        out.writeParcelable(mIdentifier, 0);
         out.writeString(mQuery);
         out.writeList(mSongsList);
         out.writeList(mAlbumsList);
@@ -86,6 +115,7 @@ public class SearchResult implements Parcelable {
     }
 
     public void readFromParcel(Parcel in) {
+        mIdentifier = in.readParcelable(ProviderIdentifier.class.getClassLoader());
         mQuery = in.readString();
         mSongsList = in.readArrayList(String.class.getClassLoader());
         mAlbumsList = in.readArrayList(String.class.getClassLoader());
