@@ -123,6 +123,7 @@ public class AudioSocket {
 
         if (mInStream.read(mIntBuffer.array(), 0, 4) != 4) {
             Log.e(TAG, "Reading an int but read didn't return 4 bytes!");
+            throw new IOException("Invalid read count, stream will be off!");
         }
         final int numFrames = mIntBuffer.getInt(0);
 
