@@ -301,6 +301,8 @@ interface IMusicProvider {
      * in bound entities (Song, Artist, Album, ...) and this logo is used to show the user where
      * this entity came from.
      * A 300x300 pixels logo is large enough for the app, regardless of the DPI.
+     * Also, the provider should not return a default logo in all cases, only when a specific
+     * reference matches. Otherwise, it should return null.
      * @param ref The song reference string
      */
     Bitmap getLogo(String ref);
