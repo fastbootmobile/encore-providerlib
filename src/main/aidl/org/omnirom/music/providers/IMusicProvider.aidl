@@ -254,43 +254,54 @@ interface IMusicProvider {
     void resume();
 
     /**
-    * Requests the provider to update an existing playlist with the songs provided by the songlist
-    *
-    * @param ref the unique reference of the playlist
-    * @return true if the change is saved
-    */
+     * Requests the provider to update an existing playlist with the songs provided by the songlist
+     *
+     * @param ref the unique reference of the playlist
+     * @return true if the change is saved
+     */
     boolean onUserSwapPlaylistItem(int oldPosition, int newPosition, String playlistRef);
 
     /**
-    * Requests the provider to delete a playlist
-    * @param ref the unique reference of the playlist
-    * @return true if the playlist is deleted
-    */
+     * Requests the provider to delete a playlist
+     * @param ref the unique reference of the playlist
+     * @return true if the playlist is deleted
+     */
     boolean deletePlaylist(String playlistRef);
 
     /**
-    * Requests the provider to delete a song of a playlist
-    * @param ref the unique reference of the playlist
-    * @return true if the song is deleted
-    */
+     * Requests the provider to delete a song of a playlist
+     * @param ref the unique reference of the playlist
+     * @return true if the song is deleted
+     */
     boolean deleteSongFromPlaylist(int songPosition,String playlistRef);
+
     /**
-    * Requests the provider to delete a song of a playlist
-    * @param ref the unique reference of the playlist
-    * @return true if the song is deleted
-    */
+     * Requests the provider to delete a song of a playlist
+     * @param ref the unique reference of the playlist
+     * @return true if the song is deleted
+     */
     boolean addSongToPlaylist(String songRef,String playlistRef,in ProviderIdentifier providerIdentifier);
+
     /**
-    * Requests the provider to add a playlist
-    * @param playlistName the name of the playlist
-    * @return the unique reference to the playlist if it has been added, false if it has not
-    */
+     * Requests the provider to add a playlist
+     * @param playlistName the name of the playlist
+     * @return the unique reference to the playlist if it has been added, false if it has not
+     */
     String addPlaylist(String playlistName);
 
+    /**
+     * Request the provider to search songs, playlists, artists and albums. Results must be provided
+     * in "onSearchResult" callback.
+     * @param query the name to search
+     */
+    void startSearch(String query);
 
     /**
-    * Request the provider to search songs, playlists, artists and albums
-    * @param query the name to search
-    */
-    void startSearch(String query);
+     * Returns the logo Bitmap associated to the provided reference. The logo reference is stored
+     * in bound entities (Song, Artist, Album, ...) and this logo is used to show the user where
+     * this entity came from.
+     * A 300x300 pixels logo is large enough for the app, regardless of the DPI.
+     * @param ref The song reference string
+     */
+    Bitmap getLogo(String ref);
 }
