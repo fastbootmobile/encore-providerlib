@@ -6,44 +6,89 @@ import android.os.Parcelable;
 import org.omnirom.music.providers.ProviderIdentifier;
 
 /**
- * Represents an abstract entity
+ * <p>Represents an abstract entity. This class must never be instantiated directly (see
+ * {@link org.omnirom.music.model.Song}, {@link org.omnirom.music.model.Album},
+ * {@link org.omnirom.music.model.Artist} and {@link org.omnirom.music.model.Song}.</p>
  *
- * IMPORTANT NOTE: You MUST make sure that the provider identifier is set FOR ALL ENTITIES
+ * <p><b>IMPORTANT NOTE:</b> You MUST make sure that the provider identifier is set FOR ALL ENTITIES
  * THAT ARE SENT TO THE APP! Failure to do so will result in content from your provider not
- * working properly.
+ * working properly.</p>
  */
 public abstract class BoundEntity implements Parcelable {
 
     private String mRef;
     private boolean mIsLoaded;
     private ProviderIdentifier mProvider;
+    private String mSourceLogo;
 
-    public BoundEntity(final String ref) {
+    BoundEntity(final String ref) {
         mRef = ref;
     }
 
-    public BoundEntity(final Parcel in) {
+    BoundEntity(final Parcel in) {
         readFromParcel(in);
     }
 
+    /**
+     * Returns the unique reference to this entity
+     * @return A unique string representing this entity
+     */
     public String getRef() {
         return mRef;
     }
 
+    /**
+     * Sets whether or not all the data for this entity is loaded. This must be set to true when
+     * all the fields of the entity are filled with the final data.
+     * @param isLoaded True if all the data is loaded, false otherwise.
+     */
     public void setIsLoaded(boolean isLoaded) {
         mIsLoaded = isLoaded;
     }
 
+    /**
+     * Returns whether or not this entity is fully loaded (all the fields are filled with the final
+     * data).
+     * @return True if all the data is loaded, false otherwise.
+     */
+    public boolean isLoaded() {
+        return mIsLoaded;
+    }
+
+    /**
+     * Sets the ProviderIdentifier that provides this entity. This must be set by the Provider
+     * before passing the entity to the app. Likewise, the app must never change this value.
+     * @param id The identifier associated to the provider that provided this entity
+     */
     public void setProvider(ProviderIdentifier id) {
         mProvider = id;
     }
 
+    /**
+     * Returns the identifier of the provider that created this entity
+     * @return A ProviderIdentifier representing the source of this entity
+     */
     public ProviderIdentifier getProvider() {
         return mProvider;
     }
 
-    public boolean isLoaded() {
-        return mIsLoaded;
+    /**
+     * Sets the reference of the logo of the source. The app will then request that reference to
+     * the provider in order to display a logo next to the entity, in order to inform the user where
+     * it came from. The image is then cached by the app to avoid requesting the Bitmap every time.
+     * @param ref A reference to the image to display.
+     */
+    public void setSourceLogo(String ref) {
+        mSourceLogo = ref;
+    }
+
+    /**
+     * Returns the reference of the logo to display, that provided this entity. The actual Bitmap
+     * may be obtained by calling getLogo(String) on {@link org.omnirom.music.providers.IMusicProvider}
+     * @return A reference string for getLogo
+     */
+    public String getLogo() {
+        return mSourceLogo;
     }
 
     @Override
@@ -56,12 +101,14 @@ public abstract class BoundEntity implements Parcelable {
         out.writeString(mRef);
         out.writeInt(mIsLoaded ? 1 : 0);
         out.writeParcelable(mProvider, 0);
+        out.writeString(mSourceLogo);
     }
 
     public void readFromParcel(Parcel in) {
         mRef = in.readString();
         mIsLoaded = in.readInt() == 1;
         mProvider = in.readParcelable(ProviderIdentifier.class.getClassLoader());
+        mSourceLogo = in.readString();
     }
 
     /**
@@ -69,7 +116,6 @@ public abstract class BoundEntity implements Parcelable {
      * exactly the same (ie. has exactly the same contents) as the one passed in parameter.
      *
      * @param other The other object to compare with
-     *
      * @return true if both objects are exactly the same
      */
     public abstract boolean isIdentical(Object other);
@@ -77,8 +123,8 @@ public abstract class BoundEntity implements Parcelable {
     /**
      * Returns whether or not the entities are similar in that their reference is identical.
      * To check for a more in-depth identity, use {@link #isIdentical(Object)}
-     * @param o
-     *            the object to compare this instance with.
+     *
+     * @param o The object to compare this instance with.
      * @return true if the references are identical
      */
     @Override

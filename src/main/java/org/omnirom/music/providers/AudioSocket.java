@@ -111,35 +111,39 @@ public class AudioSocket {
         }
     }
 
+    /**
+     * Read data from the audio socket. This method is blocking and will wait until data is
+     * available.
+     *
+     * @return An array of short samples
+     * @throws IOException
+     */
     public short[] readAudioFrames() throws IOException {
-        if (mInStream.available() > 0) {
-            int opcode = mInStream.read();
+        int opcode = mInStream.read();
 
-            if (mInStream.read(mIntBuffer.array(), 0, 4) != 4) {
-                Log.e(TAG, "Reading an int but read didn't return 4 bytes!");
-            }
-            final int numFrames = mIntBuffer.getInt(0);
-
-            final int totalToRead = numFrames * 2; // 1 short = 2 bytes
-            int totalRead = 0;
-            int sizeToRead = totalToRead;
-
-            while (totalRead < totalToRead) {
-                int read = mInStream.read(mSamplesBuffer.array(), totalRead, sizeToRead);
-                if (read >= 0) {
-                    totalRead += read;
-                }
-                sizeToRead = totalToRead - totalRead;
-            }
-
-            mSamplesBuffer.asShortBuffer().get(mSamplesShortBuffer);
-
-            short[] output = new short[numFrames];
-            System.arraycopy(mSamplesShortBuffer, 0, output, 0, numFrames);
-
-            return output;
-        } else {
-            return null;
+        if (mInStream.read(mIntBuffer.array(), 0, 4) != 4) {
+            Log.e(TAG, "Reading an int but read didn't return 4 bytes!");
+            throw new IOException("Invalid read count, stream will be off!");
         }
+        final int numFrames = mIntBuffer.getInt(0);
+
+        final int totalToRead = numFrames * 2; // 1 short = 2 bytes
+        int totalRead = 0;
+        int sizeToRead = totalToRead;
+
+        while (totalRead < totalToRead) {
+            int read = mInStream.read(mSamplesBuffer.array(), totalRead, sizeToRead);
+            if (read >= 0) {
+                totalRead += read;
+            }
+            sizeToRead = totalToRead - totalRead;
+        }
+
+        mSamplesBuffer.asShortBuffer().get(mSamplesShortBuffer);
+
+        short[] output = new short[numFrames];
+        System.arraycopy(mSamplesShortBuffer, 0, output, 0, numFrames);
+
+        return output;
     }
 }
