@@ -15,6 +15,10 @@ import org.omnirom.music.providers.ProviderIdentifier;
  * a "ref" String in their constructor. This reference MUST be unique for ALL providers. It is
  * strongly recommended to prefix it with the name of your provider service. A good example of
  * reference format is: "spotify:user:xplodwild:playlist:5oT5U5svjYPQZewzscRIQW"
+ * If you want to support Rosetta Stone IDs playback through this provider (e.g. you want to be
+ * able to play Spotify URIs), you MUST use URIs as reference. For more information about
+ * Rosetta Stone, see http://developer.echonest.com/docs/v4/index.html#rosetta and
+ * getSupportedRosettaPrefix();
  */
 interface IMusicProvider {
     /**
@@ -306,4 +310,20 @@ interface IMusicProvider {
      * @param ref The song reference string
      */
     Bitmap getLogo(String ref);
+
+    /**
+     * Returns the list of Project Rosetta Stone prefixes supported by this provider. See
+     * http://developer.echonest.com/docs/v4/index.html#rosetta for more details about the IDs. This
+     * is used when querying EchoNest and external links to easily play through the proper provider.
+     * Here are the supported prefixes:
+     * "7digital-US", "7digital-AU", "7digital-UK", "facebook", "fma", "emi_open_collection",
+     * "emi_bluenote", "emi_artists", "twitter", "spotify-WW", "seatwave", "lyricfind-US",
+     * "jambase", "musixmatch-WW", "rdio-US", "rdio-AT", "rdio-AU", "rdio-BR", "rdio-CA", "rdio-CH",
+     * "rdio-DE", "rdio-DK", "rdio-ES", "rdio-FI", "rdio-FR", "rdio-IE", "rdio-IT", "rdio-NL",
+     * "rdio-NO", "rdio-NZ", "rdio-PT", "rdio-SE", "emi_electrospective", "rdio-WW", "rdio-EE",
+     * "rdio-LT", "rdio-LV", "rdio-IS", "rdio-BE", "rdio-MX", "seatgeek", "rdio-GB", "rdio-CZ",
+     * "rdio-CO", "rdio-PL", "rdio-MY", "rdio-HK", "rdio-CL", "twitter_numeric", "7digital-ES",
+     * "openaura", "spotifyv2", "spotifyv2-ZZ"
+     */
+    List<String> getSupportedRosettaPrefix();
 }
