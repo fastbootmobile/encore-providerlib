@@ -258,6 +258,11 @@ interface IMusicProvider {
     void resume();
 
     /**
+     * Seek the currently playing track to the specified position
+     */
+    void seek(long timeMs);
+
+    /**
      * Requests the provider to update an existing playlist with the songs provided by the songlist
      *
      * @param ref the unique reference of the playlist
