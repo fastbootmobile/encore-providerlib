@@ -1,0 +1,9 @@
+package omnimusic;
+
+message FormatInfo {
+    // The sampling rate, in Hz (example: 44100)
+	required int32 sampling_rate = 1;
+
+    // The number of channels (such as 1 for mono, or 2 for stereo)
+	required int32 channels = 2;
+}

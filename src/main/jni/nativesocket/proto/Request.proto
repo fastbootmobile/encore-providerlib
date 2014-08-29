@@ -1,0 +1,10 @@
+package omnimusic;
+
+message Request {
+	enum RequestType {
+		FORMAT_INFO = 0;
+		BUFFER_INFO = 1;
+	}
+
+	required RequestType request = 1;
+}

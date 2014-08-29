@@ -1,0 +1,6 @@
+package omnimusic;
+
+message AudioResponse {
+    // Number of samples (ie. mono, single frames) written
+    required int32 written = 1;
+}
