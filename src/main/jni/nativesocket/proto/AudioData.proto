@@ -1,5 +1,0 @@
-package omnimusic;
-
-message AudioData {
-    required bytes samples = 1;
-}

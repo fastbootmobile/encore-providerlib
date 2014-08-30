@@ -1,9 +1,0 @@
-package omnimusic;
-
-message BufferInfo {
-    // Current number of samples in the buffer
-	required int32 samples = 1;
-
-    // Stutter or dropout events that occured
-	required int32 stutter = 2;
-}

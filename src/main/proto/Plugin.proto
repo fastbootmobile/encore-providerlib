@@ -1,0 +1,35 @@
+package omnimusic;
+
+message AudioData {
+    required bytes samples = 1;
+}
+
+message AudioResponse {
+    // Number of samples (ie. mono, single frames) written
+    required int32 written = 1;
+}
+
+message Request {
+    enum RequestType {
+        FORMAT_INFO = 0;
+        BUFFER_INFO = 1;
+    }
+
+    required RequestType request = 1;
+}
+
+message FormatInfo {
+    // The sampling rate, in Hz (example: 44100)
+    required int32 sampling_rate = 1;
+
+    // The number of channels (such as 1 for mono, or 2 for stereo)
+    required int32 channels = 2;
+}
+
+message BufferInfo {
+    // Current number of samples in the buffer
+    required int32 samples = 1;
+
+    // Stutter or dropout events that occured
+    required int32 stutter = 2;
+}
