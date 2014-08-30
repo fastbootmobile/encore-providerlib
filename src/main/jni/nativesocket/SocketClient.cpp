@@ -22,11 +22,7 @@
 #include <sys/un.h>
 #include <string>
 #include "Log.h"
-#include "proto/AudioData.pb.h"
-#include "proto/AudioResponse.pb.h"
-#include "proto/BufferInfo.pb.h"
-#include "proto/FormatInfo.pb.h"
-#include "proto/Request.pb.h"
+#include "proto/Plugin.pb.h"
 
 #define SOCKET_BUFFER_SIZE 1024
 #define LOG_TAG "NativeSocket-SocketClient"

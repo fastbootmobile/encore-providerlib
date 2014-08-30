@@ -15,7 +15,7 @@
 #ifndef SRC_MAIN_JNI_NATIVESOCKET_SOCKETCALLBACKS_H_
 #define SRC_MAIN_JNI_NATIVESOCKET_SOCKETCALLBACKS_H_
 
-#include <proto/Request.pb.h>
+#include <proto/Plugin.pb.h>
 
 /**
  * SocketCallbacks interface

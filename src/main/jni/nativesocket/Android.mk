@@ -6,11 +6,7 @@ LOCAL_MODULE := libnativesocket
 LOCAL_SRC_FILES := \
     $(LOCAL_PATH)/SocketClient.cpp \
     $(LOCAL_PATH)/SocketCallbacks.cpp \
-	$(LOCAL_PATH)/proto/AudioData.pb.cc \
-	$(LOCAL_PATH)/proto/AudioResponse.pb.cc \
-	$(LOCAL_PATH)/proto/BufferInfo.pb.cc \
-	$(LOCAL_PATH)/proto/FormatInfo.pb.cc \
-	$(LOCAL_PATH)/proto/Request.pb.cc
+	$(LOCAL_PATH)/proto/Plugin.pb.cc
 
 LOCAL_CPP_EXTENSION := .cc .cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../protobuf/src
