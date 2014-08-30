@@ -6,6 +6,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -204,7 +205,49 @@ public abstract class AudioSocket {
             msgBytes += inStream.read(mInputBuffer, msgBytes, length - msgBytes - 1);
         }
 
-        Log.d(TAG, "Read message opcode=" + opcode + " length=" + length + " msgbytes=" + msgBytes);
+        //Log.d(TAG, "Read message opcode=" + opcode + " length=" + length + " msgbytes=" + msgBytes);
+        switch (opcode) {
+            case OPCODE_AUDIODATA:
+                handleAudioData(mInputBuffer, msgBytes);
+                break;
+            case OPCODE_FORMATINFO:
+                handleFormatInfo(mInputBuffer, msgBytes);
+                break;
+        }
+    }
+
+    /**
+     * Process an AUDIO_DATA packet
+     * @param buffer The message data buffer
+     */
+    private void handleAudioData(byte[] buffer, int length) {
+        Plugin.AudioData message;
+        try {
+            message = Plugin.AudioData.newBuilder().mergeFrom(buffer, 0, length).build();
+
+            if (mCallback != null) {
+                mCallback.onAudioData(this, message);
+            }
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Invalid AUDIO_DATA message", e);
+        }
+    }
+
+    /**
+     * Process a FORMAT_INFO packet
+     * @param buffer The message data buffer
+     */
+    private void handleFormatInfo(byte[] buffer, int length) {
+        Plugin.FormatInfo message;
+        try {
+            message = Plugin.FormatInfo.newBuilder().mergeFrom(buffer, 0, length).build();
+
+            if (mCallback != null) {
+                mCallback.onFormatInfo(this, message);
+            }
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Invalid FORMAT_INFO message", e);
+        }
     }
 
     /**
