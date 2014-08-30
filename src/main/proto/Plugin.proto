@@ -1,14 +1,17 @@
 package omnimusic;
 
+// OPCODE_AUDIODATA = 1
 message AudioData {
     required bytes samples = 1;
 }
 
+// OPCODE_AUDIORESPONSE = 2
 message AudioResponse {
     // Number of samples (ie. mono, single frames) written
     required int32 written = 1;
 }
 
+// OPCODE_REQUEST = 3
 message Request {
     enum RequestType {
         FORMAT_INFO = 0;
@@ -18,6 +21,7 @@ message Request {
     required RequestType request = 1;
 }
 
+// OPCODE_FORMATINFO = 4
 message FormatInfo {
     // The sampling rate, in Hz (example: 44100)
     required int32 sampling_rate = 1;
@@ -26,6 +30,7 @@ message FormatInfo {
     required int32 channels = 2;
 }
 
+// OPCODE_BUFFERINFO = 5
 message BufferInfo {
     // Current number of samples in the buffer
     required int32 samples = 1;
