@@ -17,14 +17,10 @@
 
 #include <string>
 
-enum MessageType {
-    MESSAGE_AUDIO_DATA,
-    MESSAGE_AUDIO_RESPONSE,
-    MESSAGE_BUFFER_INFO,
-    MESSAGE_FORMAT_INFO,
-    MESSAGE_REQUEST
-};
-
+/**
+ * Client socket. This is the socket plug-ins should use to receive requests from the main app,
+ * and receive/push audio data to it.
+ */
 class SocketClient {
  public:
     // ctor
