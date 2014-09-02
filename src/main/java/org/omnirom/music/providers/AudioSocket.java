@@ -200,12 +200,16 @@ public abstract class AudioSocket {
         final InputStream inStream = getInputStream();
         int opcode = inStream.read();
 
+        if (length > mInputBuffer.length) {
+            Log.w(TAG, "Message length is larger than input buffer! Resizing buffer");
+            mInputBuffer = new byte[length];
+        }
+
         int msgBytes = 0;
         while (msgBytes < length - 1) {
             msgBytes += inStream.read(mInputBuffer, msgBytes, length - msgBytes - 1);
         }
 
-        //Log.d(TAG, "Read message opcode=" + opcode + " length=" + length + " msgbytes=" + msgBytes);
         switch (opcode) {
             case OPCODE_AUDIODATA:
                 handleAudioData(mInputBuffer, msgBytes);

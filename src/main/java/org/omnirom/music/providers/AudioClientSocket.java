@@ -2,6 +2,8 @@ package org.omnirom.music.providers;
 
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
+import android.os.*;
+import android.os.Process;
 import android.util.Log;
 
 import java.io.IOException;
@@ -25,6 +27,7 @@ public class AudioClientSocket extends AudioSocket {
         @Override
         public void run() {
             int readDecay = 0;
+            Process.setThreadPriority(Process.THREAD_PRIORITY_URGENT_AUDIO);
 
             while (mLoopRun) {
                 try {

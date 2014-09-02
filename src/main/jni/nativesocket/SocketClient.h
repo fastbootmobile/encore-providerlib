@@ -16,6 +16,7 @@
 #define SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
 
 #include <string>
+#include <google/protobuf/message.h>
 
 /**
  * Client socket. This is the socket plug-ins should use to receive requests from the main app,
@@ -32,14 +33,23 @@ class SocketClient {
     // Initializes the socket
     bool initialize();
 
-    // Writes the provided data to the socket
-    bool write(uint8_t* data, uint32_t len);
-
     // Process events (update network, calls callbacks)
     void processEvents();
 
+    // Write an AUDIO_DATA message
+    void writeAudioData(const void* data, const uint32_t len);
+
+    // Write a FORMAT_DATA message
+    void writeFormatData(const int channels, const int sample_rate);
+
  private:
     inline uint32_t convertBytesToUInt32(uint8_t* data);
+    inline void convertInt32ToBytes(int32_t value, uint8_t* buffer);
+
+    bool writeProtoBufMessage(uint8_t opcode, const ::google::protobuf::Message& msg);
+
+    // Writes the provided data to the socket
+    bool writeToSocket(const uint8_t* data, uint32_t len);
 
  private:
     std::string m_SocketName;

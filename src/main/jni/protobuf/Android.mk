@@ -21,13 +21,30 @@ IGNORED_WARNINGS := -Wno-sign-compare -Wno-unused-parameter -Wno-sign-promo
 CC_LITE_SRC_FILES := \
     $(LOCAL_PATH)/src/google/protobuf/stubs/common.cc                              \
     $(LOCAL_PATH)/src/google/protobuf/stubs/once.cc                                \
+    $(LOCAL_PATH)/src/google/protobuf/stubs/structurally_valid.cc                  \
+    $(LOCAL_PATH)/src/google/protobuf/stubs/strutil.cc                             \
+    $(LOCAL_PATH)/src/google/protobuf/stubs/stringprintf.cc                        \
+    $(LOCAL_PATH)/src/google/protobuf/stubs/substitute.cc                          \
+    $(LOCAL_PATH)/src/google/protobuf/descriptor.cc                                \
+    $(LOCAL_PATH)/src/google/protobuf/descriptor_database.cc                       \
+    $(LOCAL_PATH)/src/google/protobuf/descriptor.pb.cc                             \
+    $(LOCAL_PATH)/src/google/protobuf/dynamic_message.cc                           \
     $(LOCAL_PATH)/src/google/protobuf/extension_set.cc                             \
+    $(LOCAL_PATH)/src/google/protobuf/extension_set_heavy.cc                       \
+    $(LOCAL_PATH)/src/google/protobuf/generated_message_reflection.cc              \
     $(LOCAL_PATH)/src/google/protobuf/generated_message_util.cc                    \
+    $(LOCAL_PATH)/src/google/protobuf/message.cc                                   \
     $(LOCAL_PATH)/src/google/protobuf/message_lite.cc                              \
     $(LOCAL_PATH)/src/google/protobuf/repeated_field.cc                            \
+    $(LOCAL_PATH)/src/google/protobuf/reflection_ops.cc                            \
+    $(LOCAL_PATH)/src/google/protobuf/text_format.cc                               \
+    $(LOCAL_PATH)/src/google/protobuf/unknown_field_set.cc                         \
+    $(LOCAL_PATH)/src/google/protobuf/wire_format.cc                               \
     $(LOCAL_PATH)/src/google/protobuf/wire_format_lite.cc                          \
     $(LOCAL_PATH)/src/google/protobuf/io/coded_stream.cc                           \
+    $(LOCAL_PATH)/src/google/protobuf/io/tokenizer.cc                              \
     $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream.cc                       \
+    $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl.cc                  \
     $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
 
 # C++ lite library

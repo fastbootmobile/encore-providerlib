@@ -14,6 +14,7 @@
  */
 
 #include "SocketClient.h"
+#include "SocketCommon.h"
 #include <errno.h>
 #include <netdb.h>
 #include <sys/types.h>
@@ -71,17 +72,17 @@ bool SocketClient::initialize() {
         return false;
     }
 
+    ALOGD("Socket connected");
     return true;
 }
 // -------------------------------------------------------------------------------------
-bool SocketClient::write(uint8_t* data, uint32_t len) {
+bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
     uint32_t len_left = len;
-    uint32_t len_written;
-    uint8_t* data_ptr = data;
+    uint32_t len_written = 0;
 
     // Loop until all is sent
     while (len_left > 0) {
-        len_written = send(m_Server, data, len_left, 0);
+        len_written = send(m_Server, &(data[len_written]), len_left, 0);
 
         if (len_written < 0) {
             // An error occured.
@@ -90,16 +91,17 @@ bool SocketClient::write(uint8_t* data, uint32_t len) {
                 continue;
             } else {
                 // A more dangerous error occurred, bail out
+                ALOGE("Error during send(): %s (%d)", strerror(errno), errno);
                 perror("write");
                 return false;
             }
         } else if (len_written == 0) {
             // Socket is closed
+            ALOGE("Socket is closed");
             return false;
         }
 
-        len_written -= len_written;
-        data_ptr += len_written;
+        len_left -= len_written;
     }
 
     return true;
@@ -138,7 +140,47 @@ void SocketClient::processEvents() {
     ALOGD("message type: %d, message size: %d", message_type, message_size);
 }
 // -------------------------------------------------------------------------------------
+bool SocketClient::writeProtoBufMessage(uint8_t opcode, const ::google::protobuf::Message& msg) {
+    const int size = msg.ByteSize();
+    const int size_with_header = size + 5;
+    uint8_t* socket_buffer = reinterpret_cast<uint8_t*>(malloc(size_with_header));
+
+    // header
+    convertInt32ToBytes(size + 1, socket_buffer);  // + 1 for opcode byte, see Java
+    socket_buffer[4] = opcode;
+
+    // message
+    msg.SerializeToArray(&(socket_buffer[5]), size);
+
+    bool result = writeToSocket(socket_buffer, size_with_header);
+
+    free(socket_buffer);
+
+    return result;
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::writeAudioData(const void* data, const uint32_t len) {
+    omnimusic::AudioData msg;
+    msg.set_samples(data, len);
+
+    writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::writeFormatData(const int channels, const int sample_rate) {
+    omnimusic::FormatInfo msg;
+    msg.set_channels(channels);
+    msg.set_sampling_rate(sample_rate);
+
+    writeProtoBufMessage(MESSAGE_FORMAT_INFO, msg);
+}
+// -------------------------------------------------------------------------------------
 uint32_t SocketClient::convertBytesToUInt32(uint8_t* data) {
-    return ( (data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]));
+    return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]));
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::convertInt32ToBytes(int32_t value, uint8_t* buffer) {
+    for (int i = 0; i < 4; ++i) {
+        buffer[3 - i] = (value >> (i * 8));
+    }
 }
 // -------------------------------------------------------------------------------------
