@@ -186,9 +186,13 @@ public abstract class AudioSocket {
                             .build();
 
             final OutputStream outStream = getOutputStream();
-            outStream.write(intToByte(msg.getSerializedSize() + 1));
-            outStream.write(OPCODE_AUDIODATA);
-            outStream.write(msg.toByteArray());
+            if (outStream != null) {
+                outStream.write(intToByte(msg.getSerializedSize() + 1));
+                outStream.write(OPCODE_AUDIODATA);
+                outStream.write(msg.toByteArray());
+            } else {
+                throw new IOException("Cannot write audio data, socket hasn't been opened");
+            }
         }
     }
 
@@ -206,8 +210,13 @@ public abstract class AudioSocket {
         }
 
         int msgBytes = 0;
-        while (msgBytes < length - 1) {
+        while (msgBytes >= 0 && msgBytes < length - 1) {
             msgBytes += inStream.read(mInputBuffer, msgBytes, length - msgBytes - 1);
+        }
+
+        if (msgBytes < 0) {
+            Log.w(TAG, "Socket broke while reading input stream");
+            return;
         }
 
         switch (opcode) {
