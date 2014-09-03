@@ -66,13 +66,17 @@ public class Playlist extends BoundEntity {
                 Iterator<String> remoteSongs = remote.songs();
                 Iterator<String> ourSongs = songs();
 
-                while (remoteSongs.hasNext()) {
-                    String next = remoteSongs.next();
+                if (remote.getSongsCount() != getSongsCount()) {
+                    return false;
+                } else {
+                    while (remoteSongs.hasNext()) {
+                        String next = remoteSongs.next();
 
-                    if (!ourSongs.hasNext()) {
-                        return false;
-                    } else if (!ourSongs.next().equals(next)) {
-                        return false;
+                        if (!ourSongs.hasNext()) {
+                            return false;
+                        } else if (!ourSongs.next().equals(next)) {
+                            return false;
+                        }
                     }
                 }
             } else {
