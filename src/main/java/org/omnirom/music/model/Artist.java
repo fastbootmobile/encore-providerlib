@@ -68,12 +68,28 @@ public class Artist extends BoundEntity {
         }
     }
 
+    /**
+     * @return An iterator to the list of albums from this artist
+     */
     public Iterator<String> albums() {
         return mAlbums.iterator();
     }
 
+    /**
+     * @return The list of albums associated to this artist
+     */
     public List<String> getAlbums() {
         return mAlbums;
+    }
+
+    /**
+     * In all cases, it doesn't make sense to download an artist. Do we get the albums? What about
+     * the compilations? Do we download them all?
+     * @return false
+     */
+    @Override
+    public boolean isOfflineCapable() {
+        return false;
     }
 
     @Override

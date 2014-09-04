@@ -16,10 +16,37 @@ import org.omnirom.music.providers.ProviderIdentifier;
  */
 public abstract class BoundEntity implements Parcelable {
 
+    /**
+     * The entity has not been marked for offline usage
+     */
+    public static final int OFFLINE_STATUS_NO = 0;
+
+    /**
+     * The entity has been marked for offline usage, but the download is pending
+     */
+    public static final int OFFLINE_STATUS_PENDING = 1;
+
+    /**
+     * The entity has been marked for offline usage, but it is currently downloading
+     */
+    public static final int OFFLINE_STATUS_DOWNLOADING = 2;
+
+    /**
+     * The entity has been marked for offline usage, but an error occurred during download
+     */
+    public static final int OFFLINE_STATUS_ERROR = 3;
+
+    /**
+     * The entity is marked for offline usage and is available
+     */
+    public static final int OFFLINE_STATUS_READY = 4;
+
     private String mRef;
     private boolean mIsLoaded;
     private ProviderIdentifier mProvider;
     private String mSourceLogo;
+    private boolean mOfflineCapable = false;
+    private int mOfflineStatus = 0;
 
     BoundEntity(final String ref) {
         mRef = ref;
@@ -90,6 +117,37 @@ public abstract class BoundEntity implements Parcelable {
     public String getLogo() {
         return mSourceLogo;
     }
+
+    /**
+     * Returns whether or not this entity can be preloaded offline. When true, setOffline can
+     * be called.
+     */
+    public boolean isOfflineCapable() { return mOfflineCapable; }
+
+    /**
+     * Sets whether or not the entity can be preloaded for offline usage
+     * @param capable true if this entity can be preloaded offline, and setOffline can be called
+     */
+    public void setOfflineCapable(boolean capable) {
+        mOfflineCapable = capable;
+    }
+
+    /**
+     * Returns the current offline status of this entity.
+     * @return One of BoundEntity.OFFLINE_STATUS_*
+     */
+    public int getOfflineStatus() {
+        return mOfflineStatus;
+    }
+
+    /**
+     * Sets the current offline status of this entity.
+     * @param status One of BoundEntity.OFFLINE_STATUS_*
+     */
+    public void setOfflineStatus(int status) {
+        mOfflineStatus = status;
+    }
+
 
     @Override
     public int describeContents() {

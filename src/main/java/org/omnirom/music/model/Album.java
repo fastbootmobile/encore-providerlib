@@ -83,6 +83,10 @@ public class Album extends BoundEntity {
      */
     public int getSongsCount() { return mSongs.size(); }
 
+    /**
+     * Sets the year of this album
+     * @param year The year of the album
+     */
     public void setYear(int year) {
         mYear = year;
     }

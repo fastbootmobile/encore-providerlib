@@ -30,33 +30,74 @@ public class Playlist extends BoundEntity {
         mSongs = new ArrayList<String>();
     }
 
+    /**
+     * Sets the name of the playlist
+     * @param name Name of the playlist
+     */
     public void setName(String name) {
         mName = name;
     }
 
+    /**
+     * @return The name of the playlist
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * Adds a song at the end of this playlist
+     * @param s The reference of the song to add
+     */
     public void addSong(String s) {
         mSongs.add(s);
     }
 
+    /**
+     * Remove the song with the specified reference from the playlist
+     * @param s The reference of the song to remove
+     */
     public void removeSong(String s) {
         mSongs.remove(s);
     }
 
+    /**
+     * Remove the song at the specified index from the playlist
+     * @param i The index of the song
+     */
     public void removeSong(int i) {
         mSongs.remove(i);
     }
 
+    /**
+     * @return An iterator to the list of songs of this playlist
+     */
     public Iterator<String> songs() {
         return mSongs.iterator();
     }
 
-    public List<String> songsList() {return mSongs;}
+    /**
+     * @return The list of songs of this playlist
+     */
+    public List<String> songsList() {
+        return mSongs;
+    }
 
-    public int getSongsCount() { return mSongs.size(); }
+    /**
+     * @return The number of songs in this playlist
+     */
+    public int getSongsCount() {
+        return mSongs.size();
+    }
+
+    /**
+     * Set the song at the specified index
+     * @param pos The index of the song
+     * @param s The reference of the song to set
+     */
+    public void setSong(int pos, final String s){
+        mSongs.set(pos, s);
+    }
 
     @Override
     public boolean isIdentical(Object other) {
@@ -96,9 +137,7 @@ public class Playlist extends BoundEntity {
         out.writeList(mSongs);
     }
 
-    public void setSong(int pos,String s){
-        mSongs.set(pos,s);
-    }
+
     public void readFromParcel(Parcel in) {
         super.readFromParcel(in);
         mName = in.readString();
