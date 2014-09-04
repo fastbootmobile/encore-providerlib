@@ -125,8 +125,11 @@ public abstract class BoundEntity implements Parcelable {
     public boolean isOfflineCapable() { return mOfflineCapable; }
 
     /**
-     * Sets whether or not the entity can be preloaded for offline usage
-     * @param capable true if this entity can be preloaded offline, and setOffline can be called
+     * Sets whether or not the entity can be preloaded for offline usage. Note that containers
+     * (e.g. albums and playlists) will check for both the playlist offline state AND each
+     * track offline state.
+     * @param capable true if this entity can be preloaded offline, and setEntityOfflineStatus can
+     *                be called on the provider's binder.
      */
     public void setOfflineCapable(boolean capable) {
         mOfflineCapable = capable;

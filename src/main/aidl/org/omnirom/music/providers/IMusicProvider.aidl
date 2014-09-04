@@ -331,4 +331,18 @@ interface IMusicProvider {
      * "openaura", "spotifyv2", "spotifyv2-ZZ"
      */
     List<String> getSupportedRosettaPrefix();
+
+    /**
+     * Sets whether or not the provided entity should be downloaded for offline playback or not.
+     * This will be called accordingly with the entity's "isOfflineCapable" result (ie. this method
+     * will never be called with an entity for which isOfflineCapable returns false).
+     */
+    void setEntityOfflineStatus(BoundEntity ent, boolean offline);
+
+    /**
+     * Sets whether or not the app operates in offline mode (ie. simulates no network connection).
+     * Only entities for which getOfflineStatus() returns OFFLINE_STATUS_READY will be able to
+     * be played (ie. the provider will only get play() requests for these songs).
+     */
+    void setOfflineMode(boolean offline);
 }
