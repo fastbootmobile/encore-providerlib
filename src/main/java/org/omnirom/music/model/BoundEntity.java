@@ -15,7 +15,6 @@ import org.omnirom.music.providers.ProviderIdentifier;
  * working properly.</p>
  */
 public abstract class BoundEntity implements Parcelable {
-
     /**
      * The entity has not been marked for offline usage
      */
@@ -41,12 +40,11 @@ public abstract class BoundEntity implements Parcelable {
      */
     public static final int OFFLINE_STATUS_READY = 4;
 
+
     private String mRef;
     private boolean mIsLoaded;
     private ProviderIdentifier mProvider;
     private String mSourceLogo;
-    private boolean mOfflineCapable = false;
-    private int mOfflineStatus = 0;
 
     BoundEntity(final String ref) {
         mRef = ref;
@@ -117,40 +115,6 @@ public abstract class BoundEntity implements Parcelable {
     public String getLogo() {
         return mSourceLogo;
     }
-
-    /**
-     * Returns whether or not this entity can be preloaded offline. When true, setOffline can
-     * be called.
-     */
-    public boolean isOfflineCapable() { return mOfflineCapable; }
-
-    /**
-     * Sets whether or not the entity can be preloaded for offline usage. Note that containers
-     * (e.g. albums and playlists) will check for both the playlist offline state AND each
-     * track offline state.
-     * @param capable true if this entity can be preloaded offline, and setEntityOfflineStatus can
-     *                be called on the provider's binder.
-     */
-    public void setOfflineCapable(boolean capable) {
-        mOfflineCapable = capable;
-    }
-
-    /**
-     * Returns the current offline status of this entity.
-     * @return One of BoundEntity.OFFLINE_STATUS_*
-     */
-    public int getOfflineStatus() {
-        return mOfflineStatus;
-    }
-
-    /**
-     * Sets the current offline status of this entity.
-     * @param status One of BoundEntity.OFFLINE_STATUS_*
-     */
-    public void setOfflineStatus(int status) {
-        mOfflineStatus = status;
-    }
-
 
     @Override
     public int describeContents() {

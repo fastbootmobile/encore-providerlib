@@ -333,11 +333,14 @@ interface IMusicProvider {
     List<String> getSupportedRosettaPrefix();
 
     /**
-     * Sets whether or not the provided entity should be downloaded for offline playback or not.
-     * This will be called accordingly with the entity's "isOfflineCapable" result (ie. this method
-     * will never be called with an entity for which isOfflineCapable returns false).
+     * Sets whether or not the provided playlist should be downloaded for offline playback or not.
+     * This will be called accordingly with the playlist's "isOfflineCapable" result (ie. this
+     * method will never be called with a playlist for which isOfflineCapable returns false).
+     * Please note that only playlists can be set to offline mode, and not individual tracks.
+     * However, the provider MUST set the offline status for each synchronized track, as well as
+     * the playlist itself (through setOfflineStatus).
      */
-    void setEntityOfflineStatus(BoundEntity ent, boolean offline);
+    void setPlaylistOfflineMode(String ref, boolean offline);
 
     /**
      * Sets whether or not the app operates in offline mode (ie. simulates no network connection).

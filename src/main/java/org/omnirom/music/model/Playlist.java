@@ -9,6 +9,8 @@ import java.util.List;
 public class Playlist extends BoundEntity {
     private ArrayList<String> mSongs;
     private String mName;
+    private boolean mIsOfflineCapable;
+    private int mOfflineStatus;
 
     public static final Creator<Playlist> CREATOR = new
             Creator<Playlist>() {
@@ -99,6 +101,38 @@ public class Playlist extends BoundEntity {
         mSongs.set(pos, s);
     }
 
+    /**
+     * Sets the offline status of the song
+     * @param status One of BoundEntity.OFFLINE_STATUS_*
+     */
+    public void setOfflineStatus(int status) {
+        mOfflineStatus = status;
+    }
+
+    /**
+     * Returns the offline status of the song
+     * @return One of BoundEntity.OFFLINE_STATUS_*
+     */
+    public int getOfflineStatus() {
+        return mOfflineStatus;
+    }
+
+    /**
+     * Sets whether or not the provider supports downloading this playlist for offline usage
+     * @param capable true if it is valid to call setPlaylistOfflineMode with this playlist
+     */
+    public void setOfflineCapable(boolean capable) {
+        mIsOfflineCapable = capable;
+    }
+
+    /**
+     * Returns whether or not this playlist can be download for offline usage
+     * @return true if it is valid to call setPlaylistOfflineMode with this playlist
+     */
+    public boolean isOfflineCapable() {
+        return mIsOfflineCapable;
+    }
+
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Playlist) {
@@ -107,7 +141,9 @@ public class Playlist extends BoundEntity {
                 Iterator<String> remoteSongs = remote.songs();
                 Iterator<String> ourSongs = songs();
 
-                if (remote.getSongsCount() != getSongsCount()) {
+                if (remote.getSongsCount() != getSongsCount() ||
+                        remote.getOfflineStatus() != getOfflineStatus() ||
+                        remote.isOfflineCapable() != isOfflineCapable()) {
                     return false;
                 } else {
                     while (remoteSongs.hasNext()) {
@@ -135,6 +171,8 @@ public class Playlist extends BoundEntity {
         super.writeToParcel(out, flags);
         out.writeString(mName);
         out.writeList(mSongs);
+        out.writeInt(mIsOfflineCapable ? 1 : 0);
+        out.writeInt(mOfflineStatus);
     }
 
 
@@ -142,6 +180,8 @@ public class Playlist extends BoundEntity {
         super.readFromParcel(in);
         mName = in.readString();
         mSongs = in.readArrayList(String.class.getClassLoader());
+        mIsOfflineCapable = (in.readInt() == 1);
+        mOfflineStatus = in.readInt();
     }
 
     @Override

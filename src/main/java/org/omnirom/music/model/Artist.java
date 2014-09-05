@@ -82,16 +82,6 @@ public class Artist extends BoundEntity {
         return mAlbums;
     }
 
-    /**
-     * In all cases, it doesn't make sense to download an artist. Do we get the albums? What about
-     * the compilations? Do we download them all?
-     * @return false
-     */
-    @Override
-    public boolean isOfflineCapable() {
-        return false;
-    }
-
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Artist) {
