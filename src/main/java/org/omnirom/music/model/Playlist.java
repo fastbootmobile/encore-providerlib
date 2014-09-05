@@ -137,7 +137,9 @@ public class Playlist extends BoundEntity {
     public boolean isIdentical(Object other) {
         if (other instanceof Playlist) {
             Playlist remote = (Playlist) other;
-            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+            if (remote.getRef().equals(getRef()) &&
+                    (remote.getName() != null && getName() != null &&
+                    remote.getName().equals(getName()))) {
                 Iterator<String> remoteSongs = remote.songs();
                 Iterator<String> ourSongs = songs();
 
