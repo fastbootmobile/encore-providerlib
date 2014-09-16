@@ -23,7 +23,8 @@ import org.omnirom.music.providers.ProviderIdentifier;
 interface IMusicProvider {
     /**
      * Returns the API Version of this provider.
-     * The current API version is: 1
+     * Providers must return Constants.API_VERSION to make sure to return the actual value from
+     * providerlib and avoir mistakes when updating.
      */
     int getVersion();
 

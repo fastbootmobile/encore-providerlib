@@ -3,6 +3,11 @@ package org.omnirom.music.providers;
 public class Constants {
 
     /**
+     * Returns this value in getVersion
+     */
+    public static final int API_VERSION = 1;
+
+    /**
      * When the app will look for providers, it will pick-up all services that implements
      * the PICK_PROVIDER action.
      */
