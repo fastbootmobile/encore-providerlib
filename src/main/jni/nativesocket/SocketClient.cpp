@@ -183,6 +183,11 @@ void SocketClient::processEvents() {
             break;
 
         case MESSAGE_AUDIO_RESPONSE:
+            if (m_pCallback) {
+                omnimusic::AudioResponse message;
+                message.ParseFromString(container);
+                m_pCallback->onAudioResponse(message.written());
+            }
             break;
 
         case MESSAGE_BUFFER_INFO:

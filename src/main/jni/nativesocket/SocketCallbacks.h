@@ -45,11 +45,20 @@ class SocketCallbacks {
     virtual void onFormatInfo(const int32_t sample_rate, const int32_t channels) = 0;
 
     /**
-     * When audio data arrives. Data must be deleted in the callback once done using it.
+     * When audio data arrives. Data will be free()'d once the callback returns, so you must
+     * manually copy it if you need it longer.
      * @param data A pointer to the audio data
      * @param len The length of the data
      */
     virtual void onAudioData(const uint8_t* data, const uint32_t len) = 0;
+
+    /**
+     * When audio host socket responded after audio data was written.
+     * @param written The number of samples written on the last writeAudioData call. A number of
+     *                zero indicates that the host/sink buffer is full, and that you should wait
+     *                until sending more data.
+     */
+    virtual void onAudioResponse(const uint32_t written) = 0;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCALLBACKS_H_
