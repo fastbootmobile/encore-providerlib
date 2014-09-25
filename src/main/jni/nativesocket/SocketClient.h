@@ -18,6 +18,7 @@
 #define SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
 
 #include <string>
+#include <thread>
 #include <google/protobuf/message.h>
 #include "SocketCallbacks.h"
 
@@ -36,17 +37,23 @@ class SocketClient {
     // Initializes the socket
     bool initialize();
 
-    // Process events (update network, calls callbacks)
-    void processEvents();
-
     // Set the callback
     void setCallback(SocketCallbacks* callback);
 
     // Write an AUDIO_DATA message
     void writeAudioData(const void* data, const uint32_t len);
 
-    // Write a FORMAT_DATA message
-    void writeFormatData(const int channels, const int sample_rate);
+    // Write an AUDIO_RESPONSE message
+    void writeAudioResponse(const uint32_t written);
+
+    // Write a FORMAT_INFO message
+    void writeFormatInfo(const int channels, const int sample_rate);
+
+    // Write a BUFFER_INFO message
+    void writeBufferInfo(const int samples, const int stutter);
+
+    // Write a REQUEST message
+    void writeRequest(const ::omnimusic::Request_RequestType request);
 
  private:
     inline uint32_t convertBytesToUInt32(int8_t* data);
@@ -57,11 +64,16 @@ class SocketClient {
     // Writes the provided data to the socket
     bool writeToSocket(const uint8_t* data, uint32_t len);
 
+    // Process events (update network, calls callbacks). Called auto by the thread
+    void processEventsThread();
+    int processEvents();
+
  private:
     std::string m_SocketName;
     int32_t m_Server;
     int8_t* m_pBuffer;
     SocketCallbacks* m_pCallback;
+    std::thread m_EventThread;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_

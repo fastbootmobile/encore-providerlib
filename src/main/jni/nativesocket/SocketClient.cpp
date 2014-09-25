@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <sys/un.h>
 #include <string>
+#include <thread>
 #include "Log.h"
 #include "proto/Plugin.pb.h"
 
@@ -39,6 +40,11 @@ SocketClient::SocketClient(const std::string& socket_name) : m_SocketName(socket
 SocketClient::~SocketClient() {
     if (m_Server >= 0) {
         close(m_Server);
+        m_Server = -1;
+    }
+
+    if (m_EventThread.joinable()) {
+        m_EventThread.join();
     }
 
     delete[] m_pBuffer;
@@ -59,6 +65,14 @@ bool SocketClient::initialize() {
     len = offsetof(sockaddr_un, sun_path) + 1 + strlen(&addr.sun_path[1]);
 
     ALOGD("Opening SocketClient socket...");
+
+    // Ensure we stop previous events
+    if (m_EventThread.joinable()) {
+        m_Server = -1;
+        m_EventThread.join();
+    }
+
+    // Run the new socket
     m_Server = socket(PF_LOCAL, SOCK_STREAM, 0);
 
     if (m_Server < 0) {
@@ -74,6 +88,9 @@ bool SocketClient::initialize() {
     }
 
     ALOGD("Socket connected");
+
+    // Start poll thread
+    m_EventThread = std::thread(&SocketClient::processEventsThread, this);
     return true;
 }
 // -------------------------------------------------------------------------------------
@@ -108,16 +125,26 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
     return true;
 }
 // -------------------------------------------------------------------------------------
-void SocketClient::processEvents() {
+void SocketClient::processEventsThread() {
+    while (m_Server >= 0) {
+        if (processEvents() < 0) {
+            break;
+        }
+        usleep(1000);
+    }
+}
+// -------------------------------------------------------------------------------------
+int SocketClient::processEvents() {
     int32_t len_read = 0;
     uint32_t total_len_read = 0;
 
     // Before processing the protobuf structure itself, we first read the message size (4 bytes)
-     // (one byte) and the message length (four bytes), so five bytes.
+    // and the opcode (one byte), so 5 bytes total
     const uint32_t header_size = 5;
 
     while (total_len_read < header_size) {
-        len_read = recv(m_Server, (&m_pBuffer[total_len_read]), header_size, MSG_WAITALL);
+        len_read = recv(m_Server, &m_pBuffer[total_len_read], header_size - total_len_read,
+                MSG_WAITALL);
 
         if (len_read < 0) {
             if (errno == EINTR) {
@@ -126,21 +153,21 @@ void SocketClient::processEvents() {
             } else {
                 // A more dangerous error occurred, bail out
                 ALOGE("Error while reading from socket!");
-                return;
+                return -1;
             }
         } else if (len_read == 0) {
             // Socket is closed
-            return;
+            return -1;
         }
         total_len_read += len_read;
     }
 
-    uint32_t message_size = convertBytesToUInt32(&m_pBuffer[0]);
+    // Message size is protobuf message + 1 byte for the opcode in the header. We substract it
+    // so that we only read what's remaining.
+    uint32_t message_size = convertBytesToUInt32(&m_pBuffer[0]) - 1;
     MessageType message_type = static_cast<MessageType>(m_pBuffer[4]);
 
     const uint32_t final_size = header_size + message_size;
-
-    ALOGD("message type: %d, message size: %d", message_type, message_size);
 
     if (final_size > SOCKET_BUFFER_SIZE) {
         ALOGE("FATAL: Message size is larger than socket buffer size!");
@@ -148,7 +175,8 @@ void SocketClient::processEvents() {
 
     // Now that we have the message size, we can keep on reading the following data
     while (total_len_read < final_size) {
-        len_read = recv(m_Server, &m_pBuffer[total_len_read], final_size, MSG_WAITALL);
+        len_read = recv(m_Server, &m_pBuffer[total_len_read], final_size - total_len_read,
+                MSG_WAITALL);
 
         if (len_read < 0) {
             if (errno == EINTR) {
@@ -157,17 +185,17 @@ void SocketClient::processEvents() {
             } else {
                 // A more dangerous error occurred, bail out
                 ALOGE("Error while reading from socket!");
-                return;
+                return -1;
             }
         } else if (len_read == 0) {
             // Socket is closed
-            return;
+            return -1;
         }
         total_len_read += len_read;
     }
 
     // Convert to protobuf message and broadcast to the callback
-    std::string container(reinterpret_cast<const char*>(&m_pBuffer[5]), message_size - 1);
+    std::string container(reinterpret_cast<const char*>(&m_pBuffer[5]), message_size);
 
     switch (message_type) {
         case MESSAGE_AUDIO_DATA:
@@ -191,14 +219,35 @@ void SocketClient::processEvents() {
             break;
 
         case MESSAGE_BUFFER_INFO:
+            if (m_pCallback) {
+                omnimusic::BufferInfo message;
+                message.ParseFromString(container);
+                m_pCallback->onBufferInfo(message.samples(), message.stutter());
+            }
             break;
 
         case MESSAGE_FORMAT_INFO:
+            if (m_pCallback) {
+                omnimusic::FormatInfo message;
+                message.ParseFromString(container);
+                m_pCallback->onFormatInfo(message.sampling_rate(), message.channels());
+            }
             break;
 
         case MESSAGE_REQUEST:
+            if (m_pCallback) {
+                omnimusic::Request message;
+                message.ParseFromString(container);
+                m_pCallback->onRequest(message.request());
+            }
+            break;
+
+        default:
+            ALOGE("Unhandled opcode %d", message_type);
             break;
     }
+
+    return 0;
 }
 // -------------------------------------------------------------------------------------
 void SocketClient::setCallback(SocketCallbacks* callback) {
@@ -231,12 +280,34 @@ void SocketClient::writeAudioData(const void* data, const uint32_t len) {
     writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
 }
 // -------------------------------------------------------------------------------------
-void SocketClient::writeFormatData(const int channels, const int sample_rate) {
+void SocketClient::writeFormatInfo(const int channels, const int sample_rate) {
     omnimusic::FormatInfo msg;
     msg.set_channels(channels);
     msg.set_sampling_rate(sample_rate);
 
     writeProtoBufMessage(MESSAGE_FORMAT_INFO, msg);
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::writeBufferInfo(const int samples, const int stutter) {
+    omnimusic::BufferInfo msg;
+    msg.set_samples(samples);
+    msg.set_stutter(stutter);
+
+    writeProtoBufMessage(MESSAGE_BUFFER_INFO, msg);
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::writeRequest(const ::omnimusic::Request_RequestType request) {
+    omnimusic::Request msg;
+    msg.set_request(request);
+
+    writeProtoBufMessage(MESSAGE_REQUEST, msg);
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::writeAudioResponse(const uint32_t written) {
+    omnimusic::AudioResponse msg;
+    msg.set_written(written);
+
+    writeProtoBufMessage(MESSAGE_AUDIO_RESPONSE, msg);
 }
 // -------------------------------------------------------------------------------------
 uint32_t SocketClient::convertBytesToUInt32(int8_t* data) {
