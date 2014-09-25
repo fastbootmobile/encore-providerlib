@@ -26,14 +26,14 @@
 #include "Log.h"
 #include "proto/Plugin.pb.h"
 
-#define SOCKET_BUFFER_SIZE 1024
+#define SOCKET_BUFFER_SIZE 100000
 #define LOG_TAG "NativeSocket-SocketClient"
 
 // -------------------------------------------------------------------------------------
 SocketClient::SocketClient(const std::string& socket_name) : m_SocketName(socket_name),
-        m_Server(-1) {
+        m_Server(-1), m_pCallback(nullptr) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
-    m_pBuffer = new uint8_t[SOCKET_BUFFER_SIZE];
+    m_pBuffer = new int8_t[SOCKET_BUFFER_SIZE];
 }
 // -------------------------------------------------------------------------------------
 SocketClient::~SocketClient() {
@@ -110,14 +110,14 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
 // -------------------------------------------------------------------------------------
 void SocketClient::processEvents() {
     int32_t len_read = 0;
-    int32_t total_len_read = 0;
+    uint32_t total_len_read = 0;
 
-    // Before processing the protobuf structure itself, we first read the message type (one byte)
-    // and the message length (four bytes), so five bytes.
-    const int32_t header_size = 5;
+    // Before processing the protobuf structure itself, we first read the message size (4 bytes)
+     // (one byte) and the message length (four bytes), so five bytes.
+    const uint32_t header_size = 5;
 
     while (total_len_read < header_size) {
-        len_read = recv(m_Server, m_pBuffer, header_size, MSG_WAITALL);
+        len_read = recv(m_Server, (&m_pBuffer[total_len_read]), header_size, MSG_WAITALL);
 
         if (len_read < 0) {
             if (errno == EINTR) {
@@ -135,10 +135,69 @@ void SocketClient::processEvents() {
         total_len_read += len_read;
     }
 
-    uint8_t message_type = m_pBuffer[0];
-    uint32_t message_size = convertBytesToUInt32(&m_pBuffer[1]);
+    uint32_t message_size = convertBytesToUInt32(&m_pBuffer[0]);
+    MessageType message_type = static_cast<MessageType>(m_pBuffer[4]);
+
+    const uint32_t final_size = header_size + message_size;
 
     ALOGD("message type: %d, message size: %d", message_type, message_size);
+
+    if (final_size > SOCKET_BUFFER_SIZE) {
+        ALOGE("FATAL: Message size is larger than socket buffer size!");
+    }
+
+    // Now that we have the message size, we can keep on reading the following data
+    while (total_len_read < final_size) {
+        len_read = recv(m_Server, &m_pBuffer[total_len_read], final_size, MSG_WAITALL);
+
+        if (len_read < 0) {
+            if (errno == EINTR) {
+                // The socket call was interrupted, we can try again
+                continue;
+            } else {
+                // A more dangerous error occurred, bail out
+                ALOGE("Error while reading from socket!");
+                return;
+            }
+        } else if (len_read == 0) {
+            // Socket is closed
+            return;
+        }
+        total_len_read += len_read;
+    }
+
+    // Convert to protobuf message and broadcast to the callback
+    std::string container(reinterpret_cast<const char*>(&m_pBuffer[5]), message_size - 1);
+
+    switch (message_type) {
+        case MESSAGE_AUDIO_DATA:
+            if (m_pCallback) {
+                omnimusic::AudioData message;
+                message.ParseFromString(container);
+
+                std::string s_container = message.samples();
+                const uint8_t* samples = reinterpret_cast<const uint8_t*>(s_container.c_str());
+                const uint32_t num_samples = s_container.size();
+                m_pCallback->onAudioData(samples, num_samples);
+            }
+            break;
+
+        case MESSAGE_AUDIO_RESPONSE:
+            break;
+
+        case MESSAGE_BUFFER_INFO:
+            break;
+
+        case MESSAGE_FORMAT_INFO:
+            break;
+
+        case MESSAGE_REQUEST:
+            break;
+    }
+}
+// -------------------------------------------------------------------------------------
+void SocketClient::setCallback(SocketCallbacks* callback) {
+    m_pCallback = callback;
 }
 // -------------------------------------------------------------------------------------
 bool SocketClient::writeProtoBufMessage(uint8_t opcode, const ::google::protobuf::Message& msg) {
@@ -175,7 +234,7 @@ void SocketClient::writeFormatData(const int channels, const int sample_rate) {
     writeProtoBufMessage(MESSAGE_FORMAT_INFO, msg);
 }
 // -------------------------------------------------------------------------------------
-uint32_t SocketClient::convertBytesToUInt32(uint8_t* data) {
+uint32_t SocketClient::convertBytesToUInt32(int8_t* data) {
     return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | (data[3]));
 }
 // -------------------------------------------------------------------------------------

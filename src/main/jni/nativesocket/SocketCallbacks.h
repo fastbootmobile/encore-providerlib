@@ -35,21 +35,21 @@ class SocketCallbacks {
      * @param sample The number of samples currently in the buffer
      * @param stutter The number of stutters/dropouts since the start of the session
      */
-    virtual void onBufferInfo(int32_t samples, int32_t stutter) = 0;
+    virtual void onBufferInfo(const int32_t samples, const int32_t stutter) = 0;
 
     /**
      * When a FormatInfo message arrived
      * @param sample_rate The sample rate, in Hz
      * @param channels The number of channels
      */
-    virtual void onFormatInfo(int32_t sample_rate, int32_t channels) = 0;
+    virtual void onFormatInfo(const int32_t sample_rate, const int32_t channels) = 0;
 
     /**
      * When audio data arrives. Data must be deleted in the callback once done using it.
      * @param data A pointer to the audio data
      * @param len The length of the data
      */
-    virtual void onAudioData(uint8_t* data, uint32_t len) = 0;
+    virtual void onAudioData(const uint8_t* data, const uint32_t len) = 0;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCALLBACKS_H_

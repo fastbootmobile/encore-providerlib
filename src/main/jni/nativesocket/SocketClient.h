@@ -19,6 +19,7 @@
 
 #include <string>
 #include <google/protobuf/message.h>
+#include "SocketCallbacks.h"
 
 /**
  * Client socket. This is the socket plug-ins should use to receive requests from the main app,
@@ -38,6 +39,9 @@ class SocketClient {
     // Process events (update network, calls callbacks)
     void processEvents();
 
+    // Set the callback
+    void setCallback(SocketCallbacks* callback);
+
     // Write an AUDIO_DATA message
     void writeAudioData(const void* data, const uint32_t len);
 
@@ -45,7 +49,7 @@ class SocketClient {
     void writeFormatData(const int channels, const int sample_rate);
 
  private:
-    inline uint32_t convertBytesToUInt32(uint8_t* data);
+    inline uint32_t convertBytesToUInt32(int8_t* data);
     inline void convertInt32ToBytes(int32_t value, uint8_t* buffer);
 
     bool writeProtoBufMessage(uint8_t opcode, const ::google::protobuf::Message& msg);
@@ -56,7 +60,8 @@ class SocketClient {
  private:
     std::string m_SocketName;
     int32_t m_Server;
-    uint8_t* m_pBuffer;
+    int8_t* m_pBuffer;
+    SocketCallbacks* m_pCallback;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
