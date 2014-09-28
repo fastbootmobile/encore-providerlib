@@ -152,7 +152,7 @@ int SocketClient::processEvents() {
                 continue;
             } else {
                 // A more dangerous error occurred, bail out
-                ALOGE("Error while reading from socket!");
+                ALOGE("Error while reading from socket: %s (%d)!", strerror(errno), errno);
                 return -1;
             }
         } else if (len_read == 0) {
@@ -172,6 +172,8 @@ int SocketClient::processEvents() {
     if (final_size > SOCKET_BUFFER_SIZE) {
         ALOGE("FATAL: Message size is larger than socket buffer size!");
     }
+
+    // ALOGD("Message type=%d size=%d", message_type, message_size);
 
     // Now that we have the message size, we can keep on reading the following data
     while (total_len_read < final_size) {

@@ -27,6 +27,7 @@ public class Song extends BoundEntity {
     private int mYear;
     private int mDurationMillis;
     private int mOfflineStatus;
+    private boolean mIsAvailable;
 
     public static final Creator<Song> CREATOR = new
             Creator<Song>() {
@@ -139,6 +140,22 @@ public class Song extends BoundEntity {
         return mOfflineStatus;
     }
 
+    /**
+     * Sets whether or not a track is playable (available).
+     * @param available True if the track can be played (default), false otherwise
+     */
+    public void setAvailable(boolean available) {
+        mIsAvailable = available;
+    }
+
+    /**
+     * Returns whether or not the track is playable (available).
+     * @return true if the track can be played, false otherwise
+     */
+    public boolean isAvailable() {
+        return mIsAvailable;
+    }
+
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Song) {
@@ -151,7 +168,8 @@ public class Song extends BoundEntity {
                             remote.getTitle().equals(getTitle()) &&
                             remote.getYear() == getYear() &&
                             remote.getDuration() == getDuration() &&
-                            remote.getOfflineStatus() == getOfflineStatus()
+                            remote.getOfflineStatus() == getOfflineStatus() &&
+                            remote.isAvailable() == isAvailable()
             );
         } else {
             return false;
@@ -167,6 +185,7 @@ public class Song extends BoundEntity {
         out.writeInt(mYear);
         out.writeInt(mDurationMillis);
         out.writeInt(mOfflineStatus);
+        out.writeInt(mIsAvailable ? 1 : 0);
     }
 
     public void readFromParcel(Parcel in) {
@@ -177,5 +196,6 @@ public class Song extends BoundEntity {
         mYear = in.readInt();
         mDurationMillis = in.readInt();
         mOfflineStatus = in.readInt();
+        mIsAvailable = (in.readInt() == 1);
     }
 }

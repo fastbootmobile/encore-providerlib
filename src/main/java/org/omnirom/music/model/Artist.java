@@ -102,7 +102,9 @@ public class Artist extends BoundEntity {
     public boolean isIdentical(Object other) {
         if (other instanceof Artist) {
             Artist remote = (Artist) other;
-            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+            if (((remote.getName() == null && getName() == null)
+                    || (remote.getName() != null && remote.getName().equals(getName())))
+                    && remote.getRef().equals(getRef())) {
                 Iterator<String> remoteSongs = remote.albums();
                 Iterator<String> ourSongs = albums();
 
