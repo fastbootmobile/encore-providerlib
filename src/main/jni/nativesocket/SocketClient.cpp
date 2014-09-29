@@ -44,7 +44,7 @@ SocketClient::~SocketClient() {
     }
 
     if (m_EventThread.joinable()) {
-        m_EventThread.join();
+        m_EventThread.detach();
     }
 
     delete[] m_pBuffer;
