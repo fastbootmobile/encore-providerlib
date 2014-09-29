@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.UninitializedMessageException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -216,9 +217,22 @@ public abstract class AudioSocket {
         final InputStream inStream = getInputStream();
         int opcode = inStream.read();
 
+        if (length > 10 * 1024 * 1024) {
+            Log.e(TAG, "Message length is too large (" + (length / 1024 / 1024) + "MB > 10MB!), dropped");
+            return;
+        }
+
         if (length > mInputBuffer.length) {
             Log.w(TAG, "Message length is larger than input buffer! Resizing buffer");
-            mInputBuffer = new byte[length];
+            try {
+                mInputBuffer = new byte[length];
+            } catch (OutOfMemoryError e) {
+                // This might happen when the app is freezing for too long. Providers might
+                // accumulate buffers and send them through the stream, causing a way too
+                // big message to process.
+                // We skip this message.
+                return;
+            }
         }
 
         int msgBytes = 0;
@@ -272,6 +286,8 @@ public abstract class AudioSocket {
             }
         } catch (InvalidProtocolBufferException e) {
             Log.e(TAG, "Invalid FORMAT_INFO message", e);
+        } catch (UninitializedMessageException e) {
+            Log.e(TAG, "Invalid FORMAT_INFO message, dropped", e);
         }
     }
 

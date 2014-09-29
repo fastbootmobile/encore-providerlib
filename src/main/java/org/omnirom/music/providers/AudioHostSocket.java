@@ -18,6 +18,7 @@ package org.omnirom.music.providers;
 
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
+import android.net.LocalSocketAddress;
 import android.os.*;
 import android.os.Process;
 import android.util.Log;
@@ -38,6 +39,7 @@ public class AudioHostSocket extends AudioSocket {
     private boolean mLoopRun;
     private Thread mLoopThread;
     private byte[] mIntBuffer = new byte[4];
+    private String mName;
 
     private Runnable mLoop = new Runnable() {
         @Override
@@ -48,31 +50,44 @@ public class AudioHostSocket extends AudioSocket {
             while (mLoopRun) {
                 try {
                     LocalSocket client = mSocket.accept();
+
+                    // In case we terminated the loop thread, the socket will be null.
+                    if (mSocket == null) {
+                        mLoopRun = false;
+                        return;
+                    }
+
                     mInStream = client.getInputStream();
                     mOutStream = client.getOutputStream();
 
                     Log.d(TAG, "Client connected on socket " + mSocket.getLocalSocketAddress().getName());
 
                     while (mLoopRun) {
-                        int readLen = mInStream.read(mIntBuffer, readDecay, 4 - readDecay);
+                        if (mInStream.available() >= 4 - readDecay) {
+                            int readLen = mInStream.read(mIntBuffer, readDecay, 4 - readDecay);
 
-                        if (readLen < 0) {
-                            // Socket broke
-                            mLoopRun = false;
-                            break;
-                        }
+                            if (readLen < 0) {
+                                // Socket broke
+                                mLoopRun = false;
+                                break;
+                            }
 
-                        // The length
-                        if (readLen < 4 && readDecay + readLen < 4) {
-                            readDecay += readLen;
+                            // The length
+                            if (readLen < 4 && readDecay + readLen < 4) {
+                                readDecay += readLen;
+                            } else {
+                                readDecay = 0;
+                                int msgSize = byteToInt(mIntBuffer);
+                                processInputStream(msgSize);
+                            }
                         } else {
-                            readDecay = 0;
-                            int msgSize = byteToInt(mIntBuffer);
-                            processInputStream(msgSize);
+                            Thread.sleep(50);
                         }
                     }
                 } catch (IOException e) {
                     Log.w(TAG, "Exception in the socket host loop", e);
+                } catch (InterruptedException e) {
+                    return;
                 }
             }
         }
@@ -83,12 +98,22 @@ public class AudioHostSocket extends AudioSocket {
     }
 
     @Override
+    protected void finalize() throws Throwable {
+        if (mSocket != null) {
+            disconnectSocket();
+        }
+
+        super.finalize();
+    }
+
+    @Override
     protected void initializeSocket(String socketName) throws IOException {
         mSocket = new LocalServerSocket(socketName);
+        mName = socketName;
         Log.d(TAG, "Server socket " + socketName + " created");
 
         mLoopRun = true;
-        mLoopThread = new Thread(mLoop);
+        mLoopThread = new Thread(mLoop, socketName);
         mLoopThread.start();
     }
 
@@ -98,6 +123,16 @@ public class AudioHostSocket extends AudioSocket {
             mLoopRun = false;
             try {
                 mSocket.close();
+
+                // Workaround for Android bug 29939
+                // https://code.google.com/p/android/issues/detail?id=29939
+                LocalSocket tmp = new LocalSocket();
+                try {
+                    tmp.connect(new LocalSocketAddress(mName));
+                    tmp.close();
+                } catch (IOException e) { /* ignore */ }
+                ///////////////////////////////////////////////////////////
+
             } catch (IOException e) {
                 Log.e(TAG, "Error while closing socket", e);
             }

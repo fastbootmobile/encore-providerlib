@@ -64,8 +64,6 @@ bool SocketClient::initialize() {
     snprintf(&addr.sun_path[1], sizeof(addr.sun_path), "%s", m_SocketName.c_str());
     len = offsetof(sockaddr_un, sun_path) + 1 + strlen(&addr.sun_path[1]);
 
-    ALOGD("Opening SocketClient socket...");
-
     // Ensure we stop previous events
     if (m_EventThread.joinable()) {
         m_Server = -1;
@@ -80,14 +78,13 @@ bool SocketClient::initialize() {
         return false;
     }
 
-    ALOGD("Connecting to socket...");
     if (connect(m_Server, reinterpret_cast<sockaddr*>(&addr), len) < 0) {
         ALOGE("Cannot connect to socket: %s", strerror(errno));
         close(m_Server);
         return false;
     }
 
-    ALOGD("Socket connected");
+    ALOGD("Socket '%s' connected", m_SocketName.c_str());
 
     // Start poll thread
     m_EventThread = std::thread(&SocketClient::processEventsThread, this);
@@ -149,7 +146,7 @@ int SocketClient::processEvents() {
         if (len_read < 0) {
             if (errno == EINTR) {
                 // The socket call was interrupted, we can try again
-                continue;
+                return -1;
             } else {
                 // A more dangerous error occurred, bail out
                 ALOGE("Error while reading from socket: %s (%d)!", strerror(errno), errno);
@@ -182,8 +179,8 @@ int SocketClient::processEvents() {
 
         if (len_read < 0) {
             if (errno == EINTR) {
-                // The socket call was interrupted, we can try again
-                continue;
+                // The socket call was interrupted
+                return -1;
             } else {
                 // A more dangerous error occurred, bail out
                 ALOGE("Error while reading from socket!");
