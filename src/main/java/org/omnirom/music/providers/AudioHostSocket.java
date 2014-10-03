@@ -60,6 +60,11 @@ public class AudioHostSocket extends AudioSocket {
                     mInStream = client.getInputStream();
                     mOutStream = client.getOutputStream();
 
+                    if (mSocket == null || mSocket.getLocalSocketAddress() == null) {
+                        mLoopRun = false;
+                        return;
+                    }
+
                     Log.d(TAG, "Client connected on socket " + mSocket.getLocalSocketAddress().getName());
 
                     while (mLoopRun) {

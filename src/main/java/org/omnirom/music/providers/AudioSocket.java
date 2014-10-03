@@ -218,7 +218,9 @@ public abstract class AudioSocket {
         int opcode = inStream.read();
 
         if (length > 10 * 1024 * 1024) {
-            Log.e(TAG, "Message length is too large (" + (length / 1024 / 1024) + "MB > 10MB!), dropped");
+            Log.e(TAG, "Message length is too large (" + (length / 1024 / 1024) + "MB > 10MB!), closing socket");
+            // TODO: Reopen a socket
+            disconnectSocket();
             return;
         }
 
@@ -268,6 +270,8 @@ public abstract class AudioSocket {
                 mCallback.onAudioData(this, message);
             }
         } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Invalid AUDIO_DATA message", e);
+        } catch (UninitializedMessageException e) {
             Log.e(TAG, "Invalid AUDIO_DATA message", e);
         }
     }
