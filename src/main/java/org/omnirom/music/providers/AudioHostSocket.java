@@ -52,18 +52,13 @@ public class AudioHostSocket extends AudioSocket {
                     LocalSocket client = mSocket.accept();
 
                     // In case we terminated the loop thread, the socket will be null.
-                    if (mSocket == null) {
+                    if (mSocket == null || mSocket.getLocalSocketAddress() == null) {
                         mLoopRun = false;
                         return;
                     }
 
                     mInStream = client.getInputStream();
                     mOutStream = client.getOutputStream();
-
-                    if (mSocket == null || mSocket.getLocalSocketAddress() == null) {
-                        mLoopRun = false;
-                        return;
-                    }
 
                     Log.d(TAG, "Client connected on socket " + mSocket.getLocalSocketAddress().getName());
 
