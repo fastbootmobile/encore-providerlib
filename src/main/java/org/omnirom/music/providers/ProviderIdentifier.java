@@ -20,6 +20,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ProviderIdentifier implements Parcelable {
 
     private static final String TAG = "ProviderIdentifier";
@@ -27,7 +30,8 @@ public class ProviderIdentifier implements Parcelable {
     public String mPackage;
     public String mService;
     public String mName;
-    public Boolean isMultiProviderIdentifier;
+    public Boolean mIsMultiProviderIdentifier;
+
     public static final Parcelable.Creator<ProviderIdentifier> CREATOR = new
             Parcelable.Creator<ProviderIdentifier>() {
                 public ProviderIdentifier createFromParcel(Parcel in) {
@@ -47,11 +51,13 @@ public class ProviderIdentifier implements Parcelable {
         mPackage = pck;
         mService = service;
         mName = name;
-        isMultiProviderIdentifier = false;
+        mIsMultiProviderIdentifier = false;
     }
+
     public void setMultiProviderMode(){
-        isMultiProviderIdentifier = true;
+        mIsMultiProviderIdentifier = true;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ProviderIdentifier) {
@@ -80,10 +86,35 @@ public class ProviderIdentifier implements Parcelable {
         out.writeString(mName);
     }
 
-
     public void readFromParcel(Parcel in) {
         mPackage = in.readString();
         mService = in.readString();
         mName = in.readString();
+    }
+
+    public String serialize() {
+        JSONObject obj = new JSONObject();
+        try {
+            obj.put("package", mPackage);
+            obj.put("service", mService);
+            obj.put("name", mName);
+        } catch (JSONException e) {
+            // why should this even happen?
+            Log.e(TAG, "Unable to serialize the element", e);
+            throw new RuntimeException(e);
+        }
+
+        return obj.toString();
+    }
+
+    public static ProviderIdentifier fromSerialized(String input) {
+        try {
+            JSONObject obj = new JSONObject(input);
+            return new ProviderIdentifier(obj.getString("package"), obj.getString("service"),
+                    obj.getString("name"));
+        } catch (JSONException e) {
+            Log.e(TAG, "Cannot un-serialize", e);
+            return null;
+        }
     }
 }
