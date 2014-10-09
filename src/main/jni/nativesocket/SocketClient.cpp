@@ -209,11 +209,18 @@ int SocketClient::processEvents() {
             }
             break;
 
-        case MESSAGE_AUDIO_RESPONSE:
-            if (m_pCallback) {
+        case MESSAGE_AUDIO_RESPONSE: {
                 omnimusic::AudioResponse message;
                 message.ParseFromString(container);
-                m_pCallback->onAudioResponse(message.written());
+
+                if (m_pCallback) {
+                    m_pCallback->onAudioResponse(message.written());
+                }
+
+                if (m_bWaitingAudioResponse) {
+                    m_bWaitingAudioResponse = false;
+                    m_iWrittenSamples = message.written();
+                }
             }
             break;
 
@@ -272,11 +279,25 @@ bool SocketClient::writeProtoBufMessage(uint8_t opcode, const ::google::protobuf
     return result;
 }
 // -------------------------------------------------------------------------------------
-void SocketClient::writeAudioData(const void* data, const uint32_t len) {
+int32_t SocketClient::writeAudioData(const void* data, const uint32_t len, bool wait_for_response) {
     omnimusic::AudioData msg;
     msg.set_samples(data, len);
 
+    if (wait_for_response) {
+        m_iWrittenSamples = -1;
+        m_bWaitingAudioResponse = true;
+    }
+
     writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
+
+    if (wait_for_response) {
+        while (m_iWrittenSamples < 0) {
+            usleep(1);
+        }
+        return m_iWrittenSamples;
+    } else {
+        return len;
+    }
 }
 // -------------------------------------------------------------------------------------
 void SocketClient::writeFormatInfo(const int channels, const int sample_rate) {

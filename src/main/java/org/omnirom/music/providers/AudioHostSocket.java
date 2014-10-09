@@ -28,7 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Created by Guigui on 30/08/2014.
+ * Audio Socket subclass handling host sockets (generally done by the main app only)
  */
 public class AudioHostSocket extends AudioSocket {
     private static final String TAG = "AudioHostSocket";
@@ -40,6 +40,7 @@ public class AudioHostSocket extends AudioSocket {
     private Thread mLoopThread;
     private byte[] mIntBuffer = new byte[4];
     private String mName;
+    private AudioHostSocketListener mListener;
 
     private Runnable mLoop = new Runnable() {
         @Override
@@ -69,6 +70,7 @@ public class AudioHostSocket extends AudioSocket {
                             if (readLen < 0) {
                                 // Socket broke
                                 mLoopRun = false;
+                                notifySocketError();
                                 break;
                             }
 
@@ -78,16 +80,20 @@ public class AudioHostSocket extends AudioSocket {
                             } else {
                                 readDecay = 0;
                                 int msgSize = byteToInt(mIntBuffer);
-                                processInputStream(msgSize);
+                                if (!processInputStream(msgSize)) {
+                                    mLoopRun = false;
+                                    notifySocketError();
+                                }
                             }
                         } else {
-                            Thread.sleep(50);
+                            Thread.sleep(1);
                         }
                     }
                 } catch (IOException e) {
                     Log.w(TAG, "Exception in the socket host loop", e);
                 } catch (InterruptedException e) {
-                    return;
+                    mLoopRun = false;
+                    notifySocketError();
                 }
             }
         }
@@ -154,5 +160,19 @@ public class AudioHostSocket extends AudioSocket {
     @Override
     protected InputStream getInputStream() {
         return mInStream;
+    }
+
+    public void setListener(AudioHostSocketListener listener) {
+        mListener = listener;
+    }
+
+    private void notifySocketError() {
+        if (mListener != null) {
+            mListener.onSocketError();
+        }
+    }
+
+    public interface AudioHostSocketListener {
+        public void onSocketError();
     }
 }

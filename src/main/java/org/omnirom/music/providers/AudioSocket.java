@@ -58,7 +58,6 @@ public abstract class AudioSocket {
 
     private final ByteBuffer mIntBuffer;
     private ByteBuffer mSamplesBuffer;
-    private short[] mSamplesShortBuffer = new short[262144];
     private byte[] mInputBuffer = new byte[128000];
     private ISocketCallback mCallback;
     private String mSocketName;
@@ -122,6 +121,9 @@ public abstract class AudioSocket {
     /**
      * Notifies the main app of the format data. This should be called once per song (on playback
      * start for instance), to make sure the main app is running the output at the proper format.
+     * In the case of DSP providers, this metadata is ignored as the music provider gives the source
+     * clock and the format data is broadcast from the provider to the DSP effect (tl;dr the DSP
+     * has to adapt to the input format data given by the provider).
      * @param channels The number of audio channels (generally 2 for stereo)
      * @param sampleRate The sample rate of the audio (generally 44100)
      * @throws IOException
@@ -136,6 +138,72 @@ public abstract class AudioSocket {
         final OutputStream outStream = getOutputStream();
         outStream.write(intToByte(msg.getSerializedSize() + 1));
         outStream.write(OPCODE_FORMATINFO);
+        outStream.write(msg.toByteArray());
+    }
+
+    /**
+     * This method is used by audio sinks. It is used when a client sends a request for buffer info
+     * to the main app, and will reply with the current buffering info from the currently active
+     * audio sink.
+     * @param samples Current number of samples in the buffer
+     * @param stutter Stutter or dropout events that occurred
+     * @throws IOException
+     */
+    public void writeBufferInfo(int samples, int stutter) throws IOException {
+        Plugin.BufferInfo msg =
+                Plugin.BufferInfo.newBuilder()
+                .setSamples(samples)
+                .setStutter(stutter)
+                .build();
+
+        final OutputStream outStream = getOutputStream();
+        outStream.write(intToByte(msg.getSerializedSize() + 1));
+        outStream.write(OPCODE_BUFFERINFO);
+        outStream.write(msg.toByteArray());
+    }
+
+    /**
+     * Requests some metadata from the other end. Generally, this is used by provider plugins to
+     * query buffer stats from the main app, but it could be possible in the future that the app
+     * may require to pull format info from a plugin (both DSP and Music), so it is a good idea to
+     * implement a reply. It is however invalid for a music provider to request FORMAT_INFO, as the
+     * plugin must set it.
+     * Two requests exist:
+     *  - BUFFER_INFO: Requests buffer stats
+     *  - FORMAT_INFO: Requests current playback format
+     * The replies will be send (if implemented and valid) with their respective opcode packets in
+     * the callbacks.
+     *
+     * @param request The type of request to query
+     * @throws IOException
+     */
+    public void writeRequest(Plugin.Request.RequestType request) throws IOException {
+        Plugin.Request msg =
+                Plugin.Request.newBuilder()
+                .setRequest(request)
+                .build();
+
+        final OutputStream outStream = getOutputStream();
+        outStream.write(intToByte(msg.getSerializedSize() + 1));
+        outStream.write(OPCODE_REQUEST);
+        outStream.write(msg.toByteArray());
+    }
+
+    /**
+     * This method is used by audio sinks to reply to AUDIO_DATA messages, indicating the number
+     * of samples that were written.
+     * @param written The number of samples written
+     * @throws IOException
+     */
+    public void writeAudioResponse(int written) throws IOException {
+        Plugin.AudioResponse msg =
+                Plugin.AudioResponse.newBuilder()
+                        .setWritten(written)
+                        .build();
+
+        final OutputStream outStream = getOutputStream();
+        outStream.write(intToByte(msg.getSerializedSize() + 1));
+        outStream.write(OPCODE_AUDIORESPONSE);
         outStream.write(msg.toByteArray());
     }
 
@@ -213,15 +281,13 @@ public abstract class AudioSocket {
      * Process the input stream
      * @param length Length of the message (with the opcode)
      */
-    protected void processInputStream(int length) throws IOException {
+    protected boolean processInputStream(int length) throws IOException {
         final InputStream inStream = getInputStream();
         int opcode = inStream.read();
 
         if (length > 10 * 1024 * 1024) {
             Log.e(TAG, "Message length is too large (" + (length / 1024 / 1024) + "MB > 10MB!), closing socket");
-            // TODO: Reopen a socket
-            disconnectSocket();
-            return;
+            return false;
         }
 
         if (length > mInputBuffer.length) {
@@ -233,7 +299,7 @@ public abstract class AudioSocket {
                 // accumulate buffers and send them through the stream, causing a way too
                 // big message to process.
                 // We skip this message.
-                return;
+                return false;
             }
         }
 
@@ -244,7 +310,7 @@ public abstract class AudioSocket {
 
         if (msgBytes < 0) {
             Log.w(TAG, "Socket broke while reading input stream");
-            return;
+            return false;
         }
 
         switch (opcode) {
@@ -254,88 +320,121 @@ public abstract class AudioSocket {
             case OPCODE_FORMATINFO:
                 handleFormatInfo(mInputBuffer, msgBytes);
                 break;
+
+            case OPCODE_AUDIORESPONSE:
+                handleAudioResponse(mInputBuffer, msgBytes);
+                break;
+
+            case OPCODE_BUFFERINFO:
+                handleBufferInfo(mInputBuffer, msgBytes);
+                break;
+
+            case OPCODE_REQUEST:
+                handleRequest(mInputBuffer, msgBytes);
+                break;
+
+            default:
+                Log.e(TAG, "Invalid opcode " + opcode + "! Kicking out socket");
+                return false;
         }
+
+        return true;
     }
 
     /**
      * Process an AUDIO_DATA packet
      * @param buffer The message data buffer
+     * @param length The length of the message
      */
     private void handleAudioData(byte[] buffer, int length) {
-        Plugin.AudioData message;
-        try {
-            message = Plugin.AudioData.newBuilder().mergeFrom(buffer, 0, length).build();
-
-            if (mCallback != null) {
+        if (mCallback != null) {
+            Plugin.AudioData message;
+            try {
+                message = Plugin.AudioData.newBuilder().mergeFrom(buffer, 0, length).build();
                 mCallback.onAudioData(this, message);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e(TAG, "Invalid AUDIO_DATA message", e);
+            } catch (UninitializedMessageException e) {
+                Log.e(TAG, "Invalid AUDIO_DATA message", e);
             }
-        } catch (InvalidProtocolBufferException e) {
-            Log.e(TAG, "Invalid AUDIO_DATA message", e);
-        } catch (UninitializedMessageException e) {
-            Log.e(TAG, "Invalid AUDIO_DATA message", e);
         }
     }
 
     /**
      * Process a FORMAT_INFO packet
      * @param buffer The message data buffer
+     * @param length The length of the message
      */
     private void handleFormatInfo(byte[] buffer, int length) {
-        Plugin.FormatInfo message;
-        try {
-            message = Plugin.FormatInfo.newBuilder().mergeFrom(buffer, 0, length).build();
-
-            if (mCallback != null) {
+        if (mCallback != null) {
+            Plugin.FormatInfo message;
+            try {
+                message = Plugin.FormatInfo.newBuilder().mergeFrom(buffer, 0, length).build();
                 mCallback.onFormatInfo(this, message);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e(TAG, "Invalid FORMAT_INFO message", e);
+            } catch (UninitializedMessageException e) {
+                Log.e(TAG, "Invalid FORMAT_INFO message, dropped", e);
             }
-        } catch (InvalidProtocolBufferException e) {
-            Log.e(TAG, "Invalid FORMAT_INFO message", e);
-        } catch (UninitializedMessageException e) {
-            Log.e(TAG, "Invalid FORMAT_INFO message, dropped", e);
         }
     }
 
     /**
-     * Read data from the audio socket. This method is blocking and will wait until data is
-     * available.
-     *
-     * @return An array of short samples
-     * @throws IOException
+     * Process an AUDIO_RESPONSE packet
+     * @param buffer The message data buffer
+     * @param length The length of the message
      */
-    /*public short[] readAudioFrames() throws IOException {
-        if (mInStream.read(mIntBuffer.array(), 0, 4) != 4) {
-            Log.e(TAG, "Reading an int but read didn't return 4 bytes!");
-            throw new IOException("Invalid read count, stream will be off!");
-        }
-        final int messageSize = mIntBuffer.getInt(0);
-
-        int opcode = mInStream.read();
-
-        if (opcode == OPCODE_AUDIODATA) {
-            final int totalToRead = messageSize - 1; // 1 short = 2 bytes
-            int totalRead = 0;
-            int sizeToRead = totalToRead;
-
-            while (totalRead < totalToRead) {
-                int read = mInStream.read(mSamplesBuffer.array(), totalRead, sizeToRead);
-                if (read >= 0) {
-                    totalRead += read;
-                }
-                sizeToRead = totalToRead - totalRead;
+    private void handleAudioResponse(byte[] buffer, int length) {
+        if (mCallback != null) {
+            Plugin.AudioResponse message;
+            try {
+                message = Plugin.AudioResponse.newBuilder().mergeFrom(buffer, 0, length).build();
+                mCallback.onAudioResponse(this, message);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+            } catch (UninitializedMessageException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
             }
-
-            Plugin.AudioData msg = Plugin.AudioData.parseFrom(mSamplesBuffer.array());
-            msg.getSamples().copyTo(mSamplesBuffer.array(), 0);
-            mSamplesBuffer.asShortBuffer().get(mSamplesShortBuffer);
-
-            short[] output = new short[totalRead / 2];
-            System.arraycopy(mSamplesShortBuffer, 0, output, 0, totalRead / 2);
-
-            return output;
         }
+    }
 
-        return null;
-    }*/
+    /**
+     * Process a BUFFER_INFO packet
+     * @param buffer The message data buffer
+     * @param length The length of the message
+     */
+    private void handleBufferInfo(byte[] buffer, int length) {
+        if (mCallback != null) {
+            Plugin.BufferInfo message;
+            try {
+                message = Plugin.BufferInfo.newBuilder().mergeFrom(buffer, 0, length).build();
+                mCallback.onBufferInfo(this, message);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+            } catch (UninitializedMessageException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+            }
+        }
+    }
+
+    /**
+     * Process a REQUEST packet
+     * @param buffer The message data buffer
+     * @param length The length of the message
+     */
+    private void handleRequest(byte[] buffer, int length) {
+        if (mCallback != null) {
+            Plugin.Request message;
+            try {
+                message = Plugin.Request.newBuilder().mergeFrom(buffer, 0, length).build();
+                mCallback.onRequest(this, message);
+            } catch (InvalidProtocolBufferException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+            } catch (UninitializedMessageException e) {
+                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+            }
+        }
+    }
 
     protected byte[] intToByte(int value) {
         synchronized (mIntBuffer) {

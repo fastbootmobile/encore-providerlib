@@ -40,8 +40,10 @@ class SocketClient {
     // Set the callback
     void setCallback(SocketCallbacks* callback);
 
-    // Write an AUDIO_DATA message
-    void writeAudioData(const void* data, const uint32_t len);
+    // Write an AUDIO_DATA message. If wait_for_response is true, the method call will wait
+    // for the other end to reply the number of samples written, and that value will be returned.
+    // If wait_for_response is false, writeAudioData will return 'len' once the write call is done.
+    int32_t writeAudioData(const void* data, const uint32_t len, bool wait_for_response = false);
 
     // Write an AUDIO_RESPONSE message
     void writeAudioResponse(const uint32_t written);
@@ -74,6 +76,8 @@ class SocketClient {
     int8_t* m_pBuffer;
     SocketCallbacks* m_pCallback;
     std::thread m_EventThread;
+    std::atomic<bool> m_bWaitingAudioResponse;
+    std::atomic<int> m_iWrittenSamples;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
