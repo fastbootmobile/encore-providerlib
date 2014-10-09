@@ -16,4 +16,10 @@
 
 package org.omnirom.music.providers;
 
-parcelable ProviderIdentifier;
+/**
+ * Art callback AIDL interface allowing the main app to load album art asynchronously from a
+ * provider
+ */
+interface IArtCallback {
+    void onArtLoaded(in Bitmap bitmap);
+}

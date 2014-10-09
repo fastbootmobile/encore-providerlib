@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2014 Fastboot Mobile, LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.omnirom.music.providers;
 
 import org.omnirom.music.model.Song;
@@ -7,6 +23,7 @@ import org.omnirom.music.model.Artist;
 import org.omnirom.music.model.Genre;
 import org.omnirom.music.providers.IProviderCallback;
 import org.omnirom.music.providers.ProviderIdentifier;
+import org.omnirom.music.providers.IArtCallback;
 
 /**
  * This interface represents a music provider and must be implemented as the binder of a service
@@ -173,12 +190,18 @@ interface IMusicProvider {
     Playlist getPlaylist(String ref);
 
     /**
-     * Returns a bitmap for the song given. This method isn't mandatory and may return null at
+     * Returns a bitmap for the given entity. This method isn't mandatory and may return false at
      * all times if the provider isn't capable of returning a song art
      *
-     * @param song the song for which we want the bitmap
+     * @param entity The entity for which we want the bitmap
+     * @param callback The callback that will be called when the bitmap is ready
+     * @return true if the call succeded and there are chances that the provider has an art for the
+     *              entity, false otherwise
      */
-    Bitmap getSongArt(in Song song);
+    boolean getArtistArt(in Artist entity, in IArtCallback callback);
+    boolean getAlbumArt(in Album entity, in IArtCallback callback);
+    boolean getPlaylistArt(in Playlist entity, in IArtCallback callback);
+    boolean getSongArt(in Song entity, in IArtCallback callback);
 
 
     /**
