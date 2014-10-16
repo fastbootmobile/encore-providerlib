@@ -19,6 +19,7 @@ package org.omnirom.music.providers;
 import android.util.Log;
 
 import com.google.protobuf.ByteString;
+import com.google.protobuf.CodedInputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.UninitializedMessageException;
 
@@ -61,6 +62,15 @@ public abstract class AudioSocket {
     private byte[] mInputBuffer = new byte[128000];
     private ISocketCallback mCallback;
     private String mSocketName;
+
+    // Re-use messages
+    private Plugin.AudioData.Builder mAudioDataBuilder;
+    private Plugin.AudioResponse.Builder mAudioResponseBuilder;
+    private Plugin.FormatInfo.Builder mFormatInfoBuilder;
+    private Plugin.BufferInfo.Builder mBufferInfoBuilder;
+    private Plugin.Request.Builder mRequestBuilder;
+
+    private CodedInputStream mCodedInputStream;
 
     public AudioSocket() {
         mIntBuffer = ByteBuffer.allocateDirect(4);
@@ -285,6 +295,10 @@ public abstract class AudioSocket {
         final InputStream inStream = getInputStream();
         int opcode = inStream.read();
 
+        if (mCodedInputStream == null) {
+            mCodedInputStream = CodedInputStream.newInstance(inStream);
+        }
+
         if (length > 10 * 1024 * 1024) {
             Log.e(TAG, "Message length is too large (" + (length / 1024 / 1024) + "MB > 10MB!), closing socket");
             return false;
@@ -317,6 +331,7 @@ public abstract class AudioSocket {
             case OPCODE_AUDIODATA:
                 handleAudioData(mInputBuffer, msgBytes);
                 break;
+
             case OPCODE_FORMATINFO:
                 handleFormatInfo(mInputBuffer, msgBytes);
                 break;
@@ -348,10 +363,13 @@ public abstract class AudioSocket {
      */
     private void handleAudioData(byte[] buffer, int length) {
         if (mCallback != null) {
-            Plugin.AudioData message;
             try {
-                message = Plugin.AudioData.newBuilder().mergeFrom(buffer, 0, length).build();
-                mCallback.onAudioData(this, message);
+                if (mAudioDataBuilder == null) {
+                    mAudioDataBuilder = Plugin.AudioData.newBuilder();
+                }
+
+                mAudioDataBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onAudioData(this, mAudioDataBuilder);
             } catch (InvalidProtocolBufferException e) {
                 Log.e(TAG, "Invalid AUDIO_DATA message", e);
             } catch (UninitializedMessageException e) {
@@ -367,10 +385,13 @@ public abstract class AudioSocket {
      */
     private void handleFormatInfo(byte[] buffer, int length) {
         if (mCallback != null) {
-            Plugin.FormatInfo message;
             try {
-                message = Plugin.FormatInfo.newBuilder().mergeFrom(buffer, 0, length).build();
-                mCallback.onFormatInfo(this, message);
+                if (mFormatInfoBuilder == null) {
+                    mFormatInfoBuilder = Plugin.FormatInfo.newBuilder();
+                }
+
+                mFormatInfoBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onFormatInfo(this, mFormatInfoBuilder);
             } catch (InvalidProtocolBufferException e) {
                 Log.e(TAG, "Invalid FORMAT_INFO message", e);
             } catch (UninitializedMessageException e) {
@@ -386,10 +407,13 @@ public abstract class AudioSocket {
      */
     private void handleAudioResponse(byte[] buffer, int length) {
         if (mCallback != null) {
-            Plugin.AudioResponse message;
             try {
-                message = Plugin.AudioResponse.newBuilder().mergeFrom(buffer, 0, length).build();
-                mCallback.onAudioResponse(this, message);
+                if (mAudioResponseBuilder == null) {
+                    mAudioResponseBuilder = Plugin.AudioResponse.newBuilder();
+                }
+
+                mAudioResponseBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onAudioResponse(this, mAudioResponseBuilder);
             } catch (InvalidProtocolBufferException e) {
                 Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
             } catch (UninitializedMessageException e) {
@@ -405,10 +429,12 @@ public abstract class AudioSocket {
      */
     private void handleBufferInfo(byte[] buffer, int length) {
         if (mCallback != null) {
-            Plugin.BufferInfo message;
             try {
-                message = Plugin.BufferInfo.newBuilder().mergeFrom(buffer, 0, length).build();
-                mCallback.onBufferInfo(this, message);
+                if (mBufferInfoBuilder == null) {
+                    mBufferInfoBuilder = Plugin.BufferInfo.newBuilder();
+                }
+                mBufferInfoBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onBufferInfo(this, mBufferInfoBuilder);
             } catch (InvalidProtocolBufferException e) {
                 Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
             } catch (UninitializedMessageException e) {
@@ -424,14 +450,17 @@ public abstract class AudioSocket {
      */
     private void handleRequest(byte[] buffer, int length) {
         if (mCallback != null) {
-            Plugin.Request message;
             try {
-                message = Plugin.Request.newBuilder().mergeFrom(buffer, 0, length).build();
-                mCallback.onRequest(this, message);
+                if (mRequestBuilder == null) {
+                    mRequestBuilder = Plugin.Request.newBuilder();
+                }
+
+                mRequestBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onRequest(this, mRequestBuilder);
             } catch (InvalidProtocolBufferException e) {
-                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+                Log.e(TAG, "Invalid REQUEST message", e);
             } catch (UninitializedMessageException e) {
-                Log.e(TAG, "Invalid AUDIO_RESPONSE message", e);
+                Log.e(TAG, "Invalid REQUEST message", e);
             }
         }
     }
@@ -459,32 +488,32 @@ public abstract class AudioSocket {
          * Called when an AUDIO_DATA message has been received (ie. when audio data arrived)
          * @param message The protobuf message
          */
-        public void onAudioData(AudioSocket socket, Plugin.AudioData message);
+        public void onAudioData(AudioSocket socket, Plugin.AudioData.Builder message);
 
         /**
          * Called when an AUDIO_RESPONSE message has been received (ie. when audio data has
          * been delivered and the remote end sent a confirmation)
          * @param message The protobuf message
          */
-        public void onAudioResponse(AudioSocket socket, Plugin.AudioResponse message);
+        public void onAudioResponse(AudioSocket socket, Plugin.AudioResponse.Builder message);
 
         /**
          * Called when a REQUEST message has been received. The remote end is expecting the response
          * to its request (see RequestType) as soon as possible.
          * @param message The protobuf message
          */
-        public void onRequest(AudioSocket socket, Plugin.Request message);
+        public void onRequest(AudioSocket socket, Plugin.Request.Builder message);
 
         /**
          * Called when a FORMAT_INFO message has been received.
          * @param message The protobuf message
          */
-        public void onFormatInfo(AudioSocket socket, Plugin.FormatInfo message);
+        public void onFormatInfo(AudioSocket socket, Plugin.FormatInfo.Builder message);
 
         /**
          * Called when a BUFFER_INFO message has been received.
          * @param message The protobuf message
          */
-        public void onBufferInfo(AudioSocket socket, Plugin.BufferInfo message);
+        public void onBufferInfo(AudioSocket socket, Plugin.BufferInfo.Builder message);
     }
 }

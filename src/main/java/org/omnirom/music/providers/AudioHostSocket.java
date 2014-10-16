@@ -61,7 +61,15 @@ public class AudioHostSocket extends AudioSocket {
                     mInStream = client.getInputStream();
                     mOutStream = client.getOutputStream();
 
-                    Log.d(TAG, "Client connected on socket " + mSocket.getLocalSocketAddress().getName());
+                    try {
+                        Log.d(TAG, "Client connected on socket " + mSocket.getLocalSocketAddress().getName());
+                    } catch (NullPointerException e) {
+                        // I'm not sure why this happens - probably a thread race-condition, in that the socket
+                        // workaround isn't disconnecting fast enough thus an NPE occurs even if we check
+                        // for null just before getting the streams. We cut out here anyway.
+                        mLoopRun = false;
+                        return;
+                    }
 
                     while (mLoopRun) {
                         if (mInStream.available() >= 4 - readDecay) {
@@ -86,7 +94,7 @@ public class AudioHostSocket extends AudioSocket {
                                 }
                             }
                         } else {
-                            Thread.sleep(1);
+                            Thread.sleep(5);
                         }
                     }
                 } catch (IOException e) {
