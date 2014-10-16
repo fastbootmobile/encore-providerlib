@@ -290,9 +290,14 @@ int32_t SocketClient::writeAudioData(const void* data, const uint32_t len, bool 
 
     writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
 
+    long approximate_time_us = 0;
+
     if (wait_for_response) {
-        while (m_iWrittenSamples < 0) {
-            usleep(1);
+        // Wait max. about 3 seconds for a response
+        while (m_iWrittenSamples < 0 && approximate_time_us < 1000 * 1000 * 3) {
+            // Wait 0.1ms
+            usleep(100);
+            approximate_time_us += 100;
         }
         return m_iWrittenSamples;
     } else {
