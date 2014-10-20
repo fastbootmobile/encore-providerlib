@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#ifndef SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
-#define SRC_MAIN_JNI_NATIVESOCKET_SOCKETCLIENT_H_
+#ifndef SRC_MAIN_JNI_NATIVESOCKET_SOCKETHOST_H_
+#define SRC_MAIN_JNI_NATIVESOCKET_SOCKETHOST_H_
 
 #include <string>
 #include <thread>
@@ -23,16 +23,16 @@
 #include "SocketCommon.h"
 
 /**
- * Client socket. This is the socket plug-ins should use to receive requests from the main app,
- * and receive/push audio data to it.
+ * Host socket. This socket is only used by the main app, but it is implemented in providerlib
+ * to keep most of the read/write implementation common.
  */
-class SocketClient : public SocketCommon {
+class SocketHost : public SocketCommon {
  public:
     // ctor
-    explicit SocketClient(const std::string& socket_name);
+    explicit SocketHost(const std::string& socket_name);
 
     // dtor
-    virtual ~SocketClient();
+    virtual ~SocketHost();
 
     // Initializes the socket
     bool initialize();
@@ -47,6 +47,7 @@ class SocketClient : public SocketCommon {
 
  private:
     int32_t m_Server;
+    int32_t m_Client;
     int8_t* m_pBuffer;
     std::thread m_EventThread;
 };

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include "SocketClient.h"
+#include "SocketHost.h"
 #include "SocketCommon.h"
 #include <errno.h>
 #include <netdb.h>
@@ -28,15 +28,15 @@
 #include "proto/Plugin.pb.h"
 
 #define SOCKET_BUFFER_SIZE 100000
-#define LOG_TAG "NativeSocket-SocketClient"
+#define LOG_TAG "NativeSocket-SocketHost"
 
 // -------------------------------------------------------------------------------------
-SocketClient::SocketClient(const std::string& socket_name) : SocketCommon(socket_name),
-        m_Server(-1) {
+SocketHost::SocketHost(const std::string& socket_name) : SocketCommon(socket_name),
+        m_Server(-1), m_Client(-1) {
     m_pBuffer = new int8_t[SOCKET_BUFFER_SIZE];
 }
 // -------------------------------------------------------------------------------------
-SocketClient::~SocketClient() {
+SocketHost::~SocketHost() {
     if (m_Server >= 0) {
         close(m_Server);
         m_Server = -1;
@@ -49,7 +49,7 @@ SocketClient::~SocketClient() {
     delete[] m_pBuffer;
 }
 // -------------------------------------------------------------------------------------
-bool SocketClient::initialize() {
+bool SocketHost::initialize() {
     sockaddr_un addr;
     socklen_t len;
 
@@ -76,26 +76,37 @@ bool SocketClient::initialize() {
         return false;
     }
 
-    if (connect(m_Server, reinterpret_cast<sockaddr*>(&addr), len) < 0) {
-        ALOGE("Cannot connect to socket: %s", strerror(errno));
+    if (bind(m_Server, reinterpret_cast<sockaddr*>(&addr), len) < 0) {
+        ALOGE("Cannot bind to socket: %s", strerror(errno));
         close(m_Server);
         return false;
     }
 
-    ALOGD("Socket '%s' connected", m_SocketName.c_str());
+    if (listen(m_Server, 2) < 0) {
+        ALOGE("Cannot start listening on socket: %s", strerror(errno));
+        close(m_Server);
+        return false;
+    }
+
+    ALOGD("Socket '%s' ready", m_SocketName.c_str());
 
     // Start poll thread
-    m_EventThread = std::thread(&SocketClient::processEventsThread, this);
+    m_EventThread = std::thread(&SocketHost::processEventsThread, this);
     return true;
 }
 // -------------------------------------------------------------------------------------
-bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
+bool SocketHost::writeToSocket(const uint8_t* data, uint32_t len) {
+    if (m_Client < 0) {
+        ALOGE("Trying to write to socket '%s', but no client connected", m_SocketName.c_str());
+        return false;
+    }
+
     uint32_t len_left = len;
     uint32_t len_written = 0;
 
     // Loop until all is sent
     while (len_left > 0) {
-        len_written = send(m_Server, &(data[len_written]), len_left, 0);
+        len_written = send(m_Client, &(data[len_written]), len_left, 0);
 
         if (len_written < 0) {
             // An error occured.
@@ -120,16 +131,30 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
     return true;
 }
 // -------------------------------------------------------------------------------------
-void SocketClient::processEventsThread() {
+void SocketHost::processEventsThread() {
     while (m_Server >= 0) {
+        if (m_Client < 0) {
+            ALOGE("Waiting for a client");
+            // Wait for a client
+            m_Client = accept(m_Server, NULL, NULL);
+            if (m_Client < 0) {
+                ALOGE("Error in accept(): %s", strerror(errno));
+                continue;
+            }
+            ALOGE("Client connected");
+        }
+
         if (processEvents() < 0) {
-            break;
+            ALOGE("processEvents returned -1");
+            // Make sure client is disconnected
+            close(m_Client);
+            m_Client = -1;
         }
         usleep(1000);
     }
 }
 // -------------------------------------------------------------------------------------
-int SocketClient::processEvents() {
+int SocketHost::processEvents() {
     int32_t len_read = 0;
     uint32_t total_len_read = 0;
 
@@ -138,8 +163,7 @@ int SocketClient::processEvents() {
     const uint32_t header_size = 5;
 
     while (total_len_read < header_size) {
-        len_read = recv(m_Server, &m_pBuffer[total_len_read], header_size - total_len_read,
-                MSG_WAITALL);
+        len_read = recv(m_Client, &m_pBuffer[total_len_read], header_size - total_len_read, 0);
 
         if (len_read < 0) {
             if (errno == EINTR) {
@@ -163,8 +187,9 @@ int SocketClient::processEvents() {
     MessageType message_type = static_cast<MessageType>(m_pBuffer[4]);
 
     const uint32_t final_size = header_size + message_size;
-
     if (final_size > SOCKET_BUFFER_SIZE) {
+        ALOGE("FATAL: Final size=%d, message_size=%d, SOCKET_BUFFER_SIZE=%d opcode=%d", final_size,
+                message_size, SOCKET_BUFFER_SIZE, message_type);
         ALOGE("FATAL: Message size is larger than socket buffer size!");
     }
 
@@ -172,7 +197,7 @@ int SocketClient::processEvents() {
 
     // Now that we have the message size, we can keep on reading the following data
     while (total_len_read < final_size) {
-        len_read = recv(m_Server, &m_pBuffer[total_len_read], final_size - total_len_read,
+        len_read = recv(m_Client, &m_pBuffer[total_len_read], final_size - total_len_read,
                 MSG_WAITALL);
 
         if (len_read < 0) {
@@ -191,8 +216,6 @@ int SocketClient::processEvents() {
         total_len_read += len_read;
     }
 
-    processMessage(m_pBuffer, message_size, message_type);
-
-    return 0;
+    return processMessage(m_pBuffer, message_size, message_type);
 }
 // -------------------------------------------------------------------------------------

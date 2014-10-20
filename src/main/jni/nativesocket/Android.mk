@@ -19,7 +19,9 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libnativesocket
 LOCAL_SRC_FILES := \
     $(LOCAL_PATH)/SocketClient.cpp \
+    $(LOCAL_PATH)/SocketHost.cpp \
     $(LOCAL_PATH)/SocketCallbacks.cpp \
+    $(LOCAL_PATH)/SocketCommon.cpp \
 	$(LOCAL_PATH)/proto/Plugin.pb.cc
 
 LOCAL_CPP_EXTENSION := .cc .cpp
