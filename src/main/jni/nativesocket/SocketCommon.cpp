@@ -76,8 +76,8 @@ int SocketCommon::processMessage(const int8_t* data, const int message_size,
                 }
 
                 if (m_bWaitingAudioResponse) {
-                    m_bWaitingAudioResponse = false;
                     m_iWrittenSamples = message.written();
+                    m_bWaitingAudioResponse = false;
                 }
             }
             break;
