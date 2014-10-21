@@ -40,9 +40,14 @@ std::string SocketCommon::getSocketName() const {
     return m_SocketName;
 }
 // -------------------------------------------------------------------------------------
-int SocketCommon::processMessage(const int8_t* data, const size_t message_size,
+int SocketCommon::processMessage(const int8_t* data, const int message_size,
         const MessageType message_type) {
     // ALOGD("Message length=%d", message_size);
+
+    if (message_size <= 0) {
+        ALOGW("Message size invalid! (%d)", message_size);
+        return -1;
+    }
 
     // Convert to protobuf message and broadcast to the callback
     std::string container(reinterpret_cast<const char*>(&data[5]), message_size);

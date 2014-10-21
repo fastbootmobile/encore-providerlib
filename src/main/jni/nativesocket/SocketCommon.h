@@ -80,7 +80,7 @@ class SocketCommon {
     // Writes the provided data to the socket
     virtual bool writeToSocket(const uint8_t* data, uint32_t len) = 0;
 
-    int processMessage(const int8_t* data, const size_t message_size,
+    int processMessage(const int8_t* data, const int message_size,
             const MessageType message_type);
 
 
