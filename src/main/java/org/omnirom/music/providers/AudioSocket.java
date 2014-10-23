@@ -466,11 +466,7 @@ public abstract class AudioSocket {
     }
 
     protected byte[] intToByte(int value) {
-        synchronized (mIntBuffer) {
-            mIntBuffer.rewind();
-            mIntBuffer.putInt(value);
-            return mIntBuffer.array();
-        }
+        return ByteBuffer.allocate(4).putInt(value).array();
     }
 
     protected int byteToInt(byte[] data) {

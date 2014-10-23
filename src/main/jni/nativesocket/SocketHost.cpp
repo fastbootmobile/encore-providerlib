@@ -156,11 +156,11 @@ void SocketHost::processEventsThread() {
 // -------------------------------------------------------------------------------------
 int SocketHost::processEvents() {
     int32_t len_read = 0;
-    uint32_t total_len_read = 0;
+    int32_t total_len_read = 0;
 
     // Before processing the protobuf structure itself, we first read the message size (4 bytes)
     // and the opcode (one byte), so 5 bytes total
-    const uint32_t header_size = 5;
+    const int32_t header_size = 5;
 
     while (total_len_read < header_size) {
         len_read = recv(m_Client, &m_pBuffer[total_len_read], header_size - total_len_read, 0);
@@ -183,10 +183,10 @@ int SocketHost::processEvents() {
 
     // Message size is protobuf message + 1 byte for the opcode in the header. We substract it
     // so that we only read what's remaining.
-    uint32_t message_size = convertBytesToUInt32(reinterpret_cast<uint8_t*>(&m_pBuffer[0])) - 1;
+    int32_t message_size = convertBytesToInt32(reinterpret_cast<uint8_t*>(&m_pBuffer[0])) - 1;
     MessageType message_type = static_cast<MessageType>(m_pBuffer[4]);
 
-    const uint32_t final_size = header_size + message_size;
+    const int32_t final_size = header_size + message_size;
     if (final_size > SOCKET_BUFFER_SIZE) {
         ALOGE("FATAL: Final size=%d, message_size=%d, SOCKET_BUFFER_SIZE=%d opcode=%d", final_size,
                 message_size, SOCKET_BUFFER_SIZE, message_type);

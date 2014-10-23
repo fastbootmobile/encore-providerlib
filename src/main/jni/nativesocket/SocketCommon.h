@@ -19,6 +19,8 @@
 
 #include "SocketCallbacks.h"
 #include <google/protobuf/message.h>
+#include <atomic>
+#include <mutex>
 
 // Keep in tune with Java
 enum MessageType {
@@ -67,7 +69,11 @@ class SocketCommon {
         return data[3] | ( (char) data[2] << 8 ) | ( (char) data[1] << 16 ) | ( (char) data[0] << 24 );
     }
 
-    inline void convertInt32ToBytes(uint32_t n, uint8_t* buffer) {
+    inline int32_t convertBytesToInt32(uint8_t* data) {
+        return data[3] | ( (char) data[2] << 8 ) | ( (char) data[1] << 16 ) | ( (char) data[0] << 24 );
+    }
+
+    inline void convertInt32ToBytes(int32_t n, uint8_t* buffer) {
         buffer[0] = (n >> 24) & 0xFF;
         buffer[1] = (n >> 16) & 0xFF;
         buffer[2] = (n >> 8) & 0xFF;
