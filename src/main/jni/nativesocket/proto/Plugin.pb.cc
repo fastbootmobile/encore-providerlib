@@ -209,6 +209,7 @@ const int AudioData::kSamplesFieldNumber;
 AudioData::AudioData()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:omnimusic.AudioData)
 }
 
 void AudioData::InitAsDefaultInstance() {
@@ -218,20 +219,23 @@ AudioData::AudioData(const AudioData& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:omnimusic.AudioData)
 }
 
 void AudioData::SharedCtor() {
+  ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  samples_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  samples_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 AudioData::~AudioData() {
+  // @@protoc_insertion_point(destructor:omnimusic.AudioData)
   SharedDtor();
 }
 
 void AudioData::SharedDtor() {
-  if (samples_ != &::google::protobuf::internal::kEmptyString) {
+  if (samples_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete samples_;
   }
   if (this != default_instance_) {
@@ -260,11 +264,9 @@ AudioData* AudioData::New() const {
 }
 
 void AudioData::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_samples()) {
-      if (samples_ != &::google::protobuf::internal::kEmptyString) {
-        samples_->clear();
-      }
+  if (has_samples()) {
+    if (samples_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+      samples_->clear();
     }
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -273,28 +275,32 @@ void AudioData::Clear() {
 
 bool AudioData::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:omnimusic.AudioData)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required bytes samples = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+        if (tag == 10) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_samples()));
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -302,15 +308,21 @@ bool AudioData::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:omnimusic.AudioData)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:omnimusic.AudioData)
+  return false;
 #undef DO_
 }
 
 void AudioData::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:omnimusic.AudioData)
   // required bytes samples = 1;
   if (has_samples()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytes(
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
       1, this->samples(), output);
   }
 
@@ -318,10 +330,12 @@ void AudioData::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:omnimusic.AudioData)
 }
 
 ::google::protobuf::uint8* AudioData::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:omnimusic.AudioData)
   // required bytes samples = 1;
   if (has_samples()) {
     target =
@@ -333,6 +347,7 @@ void AudioData::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:omnimusic.AudioData)
   return target;
 }
 
@@ -426,6 +441,7 @@ const int AudioResponse::kWrittenFieldNumber;
 AudioResponse::AudioResponse()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:omnimusic.AudioResponse)
 }
 
 void AudioResponse::InitAsDefaultInstance() {
@@ -435,6 +451,7 @@ AudioResponse::AudioResponse(const AudioResponse& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:omnimusic.AudioResponse)
 }
 
 void AudioResponse::SharedCtor() {
@@ -444,6 +461,7 @@ void AudioResponse::SharedCtor() {
 }
 
 AudioResponse::~AudioResponse() {
+  // @@protoc_insertion_point(destructor:omnimusic.AudioResponse)
   SharedDtor();
 }
 
@@ -474,39 +492,41 @@ AudioResponse* AudioResponse::New() const {
 }
 
 void AudioResponse::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    written_ = 0;
-  }
+  written_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool AudioResponse::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:omnimusic.AudioResponse)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required int32 written = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &written_)));
           set_has_written();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -514,12 +534,18 @@ bool AudioResponse::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:omnimusic.AudioResponse)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:omnimusic.AudioResponse)
+  return false;
 #undef DO_
 }
 
 void AudioResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:omnimusic.AudioResponse)
   // required int32 written = 1;
   if (has_written()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->written(), output);
@@ -529,10 +555,12 @@ void AudioResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:omnimusic.AudioResponse)
 }
 
 ::google::protobuf::uint8* AudioResponse::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:omnimusic.AudioResponse)
   // required int32 written = 1;
   if (has_written()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->written(), target);
@@ -542,6 +570,7 @@ void AudioResponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:omnimusic.AudioResponse)
   return target;
 }
 
@@ -656,6 +685,7 @@ const int Request::kRequestFieldNumber;
 Request::Request()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:omnimusic.Request)
 }
 
 void Request::InitAsDefaultInstance() {
@@ -665,6 +695,7 @@ Request::Request(const Request& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:omnimusic.Request)
 }
 
 void Request::SharedCtor() {
@@ -674,6 +705,7 @@ void Request::SharedCtor() {
 }
 
 Request::~Request() {
+  // @@protoc_insertion_point(destructor:omnimusic.Request)
   SharedDtor();
 }
 
@@ -704,23 +736,24 @@ Request* Request::New() const {
 }
 
 void Request::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    request_ = 0;
-  }
+  request_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool Request::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:omnimusic.Request)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required .omnimusic.Request.RequestType request = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
@@ -731,17 +764,18 @@ bool Request::MergePartialFromCodedStream(
             mutable_unknown_fields()->AddVarint(1, value);
           }
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -749,12 +783,18 @@ bool Request::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:omnimusic.Request)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:omnimusic.Request)
+  return false;
 #undef DO_
 }
 
 void Request::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:omnimusic.Request)
   // required .omnimusic.Request.RequestType request = 1;
   if (has_request()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
@@ -765,10 +805,12 @@ void Request::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:omnimusic.Request)
 }
 
 ::google::protobuf::uint8* Request::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:omnimusic.Request)
   // required .omnimusic.Request.RequestType request = 1;
   if (has_request()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
@@ -779,6 +821,7 @@ void Request::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:omnimusic.Request)
   return target;
 }
 
@@ -872,6 +915,7 @@ const int FormatInfo::kChannelsFieldNumber;
 FormatInfo::FormatInfo()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:omnimusic.FormatInfo)
 }
 
 void FormatInfo::InitAsDefaultInstance() {
@@ -881,6 +925,7 @@ FormatInfo::FormatInfo(const FormatInfo& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:omnimusic.FormatInfo)
 }
 
 void FormatInfo::SharedCtor() {
@@ -891,6 +936,7 @@ void FormatInfo::SharedCtor() {
 }
 
 FormatInfo::~FormatInfo() {
+  // @@protoc_insertion_point(destructor:omnimusic.FormatInfo)
   SharedDtor();
 }
 
@@ -921,30 +967,44 @@ FormatInfo* FormatInfo::New() const {
 }
 
 void FormatInfo::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    sampling_rate_ = 0;
-    channels_ = 0;
-  }
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<FormatInfo*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(sampling_rate_, channels_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool FormatInfo::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:omnimusic.FormatInfo)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required int32 sampling_rate = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &sampling_rate_)));
           set_has_sampling_rate();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_channels;
         break;
@@ -952,25 +1012,25 @@ bool FormatInfo::MergePartialFromCodedStream(
 
       // required int32 channels = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_channels:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &channels_)));
           set_has_channels();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -978,12 +1038,18 @@ bool FormatInfo::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:omnimusic.FormatInfo)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:omnimusic.FormatInfo)
+  return false;
 #undef DO_
 }
 
 void FormatInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:omnimusic.FormatInfo)
   // required int32 sampling_rate = 1;
   if (has_sampling_rate()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->sampling_rate(), output);
@@ -998,10 +1064,12 @@ void FormatInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:omnimusic.FormatInfo)
 }
 
 ::google::protobuf::uint8* FormatInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:omnimusic.FormatInfo)
   // required int32 sampling_rate = 1;
   if (has_sampling_rate()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->sampling_rate(), target);
@@ -1016,6 +1084,7 @@ void FormatInfo::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:omnimusic.FormatInfo)
   return target;
 }
 
@@ -1121,6 +1190,7 @@ const int BufferInfo::kStutterFieldNumber;
 BufferInfo::BufferInfo()
   : ::google::protobuf::Message() {
   SharedCtor();
+  // @@protoc_insertion_point(constructor:omnimusic.BufferInfo)
 }
 
 void BufferInfo::InitAsDefaultInstance() {
@@ -1130,6 +1200,7 @@ BufferInfo::BufferInfo(const BufferInfo& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:omnimusic.BufferInfo)
 }
 
 void BufferInfo::SharedCtor() {
@@ -1140,6 +1211,7 @@ void BufferInfo::SharedCtor() {
 }
 
 BufferInfo::~BufferInfo() {
+  // @@protoc_insertion_point(destructor:omnimusic.BufferInfo)
   SharedDtor();
 }
 
@@ -1170,30 +1242,44 @@ BufferInfo* BufferInfo::New() const {
 }
 
 void BufferInfo::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    samples_ = 0;
-    stutter_ = 0;
-  }
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<BufferInfo*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  ZR_(samples_, stutter_);
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
 bool BufferInfo::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
+  // @@protoc_insertion_point(parse_start:omnimusic.BufferInfo)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
       // required int32 samples = 1;
       case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &samples_)));
           set_has_samples();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
         if (input->ExpectTag(16)) goto parse_stutter;
         break;
@@ -1201,25 +1287,25 @@ bool BufferInfo::MergePartialFromCodedStream(
 
       // required int32 stutter = 2;
       case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+        if (tag == 16) {
          parse_stutter:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &stutter_)));
           set_has_stutter();
         } else {
-          goto handle_uninterpreted;
+          goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) return true;
+        if (input->ExpectAtEnd()) goto success;
         break;
       }
 
       default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
+          goto success;
         }
         DO_(::google::protobuf::internal::WireFormat::SkipField(
               input, tag, mutable_unknown_fields()));
@@ -1227,12 +1313,18 @@ bool BufferInfo::MergePartialFromCodedStream(
       }
     }
   }
+success:
+  // @@protoc_insertion_point(parse_success:omnimusic.BufferInfo)
   return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:omnimusic.BufferInfo)
+  return false;
 #undef DO_
 }
 
 void BufferInfo::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:omnimusic.BufferInfo)
   // required int32 samples = 1;
   if (has_samples()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->samples(), output);
@@ -1247,10 +1339,12 @@ void BufferInfo::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
+  // @@protoc_insertion_point(serialize_end:omnimusic.BufferInfo)
 }
 
 ::google::protobuf::uint8* BufferInfo::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:omnimusic.BufferInfo)
   // required int32 samples = 1;
   if (has_samples()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->samples(), target);
@@ -1265,6 +1359,7 @@ void BufferInfo::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
+  // @@protoc_insertion_point(serialize_to_array_end:omnimusic.BufferInfo)
   return target;
 }
 

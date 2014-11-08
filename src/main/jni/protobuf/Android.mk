@@ -42,10 +42,20 @@ CC_LITE_SRC_FILES := \
     $(LOCAL_PATH)/src/google/protobuf/wire_format.cc                               \
     $(LOCAL_PATH)/src/google/protobuf/wire_format_lite.cc                          \
     $(LOCAL_PATH)/src/google/protobuf/io/coded_stream.cc                           \
+    $(LOCAL_PATH)/src/google/protobuf/io/strtod.cc                                 \
     $(LOCAL_PATH)/src/google/protobuf/io/tokenizer.cc                              \
     $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream.cc                       \
     $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl.cc                  \
     $(LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
+
+
+ifeq ($(TARGET_ARCH),x86)
+    CC_LITE_SRC_FILES += $(LOCAL_PATH)/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+endif
+
+ifeq ($(TARGET_ARCH),x86_64)
+    CC_LITE_SRC_FILES += $(LOCAL_PATH)/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
+endif
 
 # C++ lite library
 # =======================================================
@@ -57,15 +67,10 @@ LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_SRC_FILES := $(CC_LITE_SRC_FILES)
 
-ifeq ($(TARGET_ARCH),x86)
-    LOCAL_SRC_FILES += $(LOCAL_PATH)/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc
-endif
-
 LOCAL_C_INCLUDES := \
     $(LOCAL_PATH)/android \
     $(LOCAL_PATH)/src
 
-LOCAL_CFLAGS := -DGOOGLE_PROTOBUF_NO_RTTI $(IGNORED_WARNINGS)
-# LOCAL_NDK_STL_VARIANT := stlport_static
+LOCAL_CFLAGS := -DGOOGLE_PROTOBUF_NO_RTTI -Wno-sign-compare $(IGNORED_WARNINGS)
 
 include $(BUILD_SHARED_LIBRARY)

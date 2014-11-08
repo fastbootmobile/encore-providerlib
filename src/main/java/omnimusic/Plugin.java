@@ -8,10 +8,10 @@ public final class Plugin {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
-  public interface AudioDataOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface AudioDataOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:omnimusic.AudioData)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required bytes samples = 1;
     /**
      * <code>required bytes samples = 1;</code>
      */
@@ -23,10 +23,15 @@ public final class Plugin {
   }
   /**
    * Protobuf type {@code omnimusic.AudioData}
+   *
+   * <pre>
+   * OPCODE_AUDIODATA = 1
+   * </pre>
    */
   public static final class AudioData extends
-      com.google.protobuf.GeneratedMessage
-      implements AudioDataOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:omnimusic.AudioData)
+      AudioDataOrBuilder {
     // Use AudioData.newBuilder() to construct.
     private AudioData(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -117,7 +122,6 @@ public final class Plugin {
     }
 
     private int bitField0_;
-    // required bytes samples = 1;
     public static final int SAMPLES_FIELD_NUMBER = 1;
     private com.google.protobuf.ByteString samples_;
     /**
@@ -139,7 +143,8 @@ public final class Plugin {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasSamples()) {
         memoizedIsInitialized = 0;
@@ -248,10 +253,15 @@ public final class Plugin {
     }
     /**
      * Protobuf type {@code omnimusic.AudioData}
+     *
+     * <pre>
+     * OPCODE_AUDIODATA = 1
+     * </pre>
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements omnimusic.Plugin.AudioDataOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:omnimusic.AudioData)
+        omnimusic.Plugin.AudioDataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return omnimusic.Plugin.internal_static_omnimusic_AudioData_descriptor;
@@ -368,7 +378,6 @@ public final class Plugin {
       }
       private int bitField0_;
 
-      // required bytes samples = 1;
       private com.google.protobuf.ByteString samples_ = com.google.protobuf.ByteString.EMPTY;
       /**
        * <code>required bytes samples = 1;</code>
@@ -415,10 +424,10 @@ public final class Plugin {
     // @@protoc_insertion_point(class_scope:omnimusic.AudioData)
   }
 
-  public interface AudioResponseOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface AudioResponseOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:omnimusic.AudioResponse)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required int32 written = 1;
     /**
      * <code>required int32 written = 1;</code>
      *
@@ -438,10 +447,15 @@ public final class Plugin {
   }
   /**
    * Protobuf type {@code omnimusic.AudioResponse}
+   *
+   * <pre>
+   * OPCODE_AUDIORESPONSE = 2
+   * </pre>
    */
   public static final class AudioResponse extends
-      com.google.protobuf.GeneratedMessage
-      implements AudioResponseOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:omnimusic.AudioResponse)
+      AudioResponseOrBuilder {
     // Use AudioResponse.newBuilder() to construct.
     private AudioResponse(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -532,7 +546,6 @@ public final class Plugin {
     }
 
     private int bitField0_;
-    // required int32 written = 1;
     public static final int WRITTEN_FIELD_NUMBER = 1;
     private int written_;
     /**
@@ -562,7 +575,8 @@ public final class Plugin {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasWritten()) {
         memoizedIsInitialized = 0;
@@ -671,10 +685,15 @@ public final class Plugin {
     }
     /**
      * Protobuf type {@code omnimusic.AudioResponse}
+     *
+     * <pre>
+     * OPCODE_AUDIORESPONSE = 2
+     * </pre>
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements omnimusic.Plugin.AudioResponseOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:omnimusic.AudioResponse)
+        omnimusic.Plugin.AudioResponseOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return omnimusic.Plugin.internal_static_omnimusic_AudioResponse_descriptor;
@@ -791,7 +810,6 @@ public final class Plugin {
       }
       private int bitField0_;
 
-      // required int32 written = 1;
       private int written_ ;
       /**
        * <code>required int32 written = 1;</code>
@@ -851,10 +869,10 @@ public final class Plugin {
     // @@protoc_insertion_point(class_scope:omnimusic.AudioResponse)
   }
 
-  public interface RequestOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface RequestOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:omnimusic.Request)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required .omnimusic.Request.RequestType request = 1;
     /**
      * <code>required .omnimusic.Request.RequestType request = 1;</code>
      */
@@ -866,10 +884,15 @@ public final class Plugin {
   }
   /**
    * Protobuf type {@code omnimusic.Request}
+   *
+   * <pre>
+   * OPCODE_REQUEST = 3
+   * </pre>
    */
   public static final class Request extends
-      com.google.protobuf.GeneratedMessage
-      implements RequestOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:omnimusic.Request)
+      RequestOrBuilder {
     // Use Request.newBuilder() to construct.
     private Request(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -1048,7 +1071,6 @@ public final class Plugin {
     }
 
     private int bitField0_;
-    // required .omnimusic.Request.RequestType request = 1;
     public static final int REQUEST_FIELD_NUMBER = 1;
     private omnimusic.Plugin.Request.RequestType request_;
     /**
@@ -1070,7 +1092,8 @@ public final class Plugin {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasRequest()) {
         memoizedIsInitialized = 0;
@@ -1179,10 +1202,15 @@ public final class Plugin {
     }
     /**
      * Protobuf type {@code omnimusic.Request}
+     *
+     * <pre>
+     * OPCODE_REQUEST = 3
+     * </pre>
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements omnimusic.Plugin.RequestOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:omnimusic.Request)
+        omnimusic.Plugin.RequestOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return omnimusic.Plugin.internal_static_omnimusic_Request_descriptor;
@@ -1299,7 +1327,6 @@ public final class Plugin {
       }
       private int bitField0_;
 
-      // required .omnimusic.Request.RequestType request = 1;
       private omnimusic.Plugin.Request.RequestType request_ = omnimusic.Plugin.Request.RequestType.FORMAT_INFO;
       /**
        * <code>required .omnimusic.Request.RequestType request = 1;</code>
@@ -1346,10 +1373,10 @@ public final class Plugin {
     // @@protoc_insertion_point(class_scope:omnimusic.Request)
   }
 
-  public interface FormatInfoOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface FormatInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:omnimusic.FormatInfo)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required int32 sampling_rate = 1;
     /**
      * <code>required int32 sampling_rate = 1;</code>
      *
@@ -1367,7 +1394,6 @@ public final class Plugin {
      */
     int getSamplingRate();
 
-    // required int32 channels = 2;
     /**
      * <code>required int32 channels = 2;</code>
      *
@@ -1387,10 +1413,15 @@ public final class Plugin {
   }
   /**
    * Protobuf type {@code omnimusic.FormatInfo}
+   *
+   * <pre>
+   * OPCODE_FORMATINFO = 4
+   * </pre>
    */
   public static final class FormatInfo extends
-      com.google.protobuf.GeneratedMessage
-      implements FormatInfoOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:omnimusic.FormatInfo)
+      FormatInfoOrBuilder {
     // Use FormatInfo.newBuilder() to construct.
     private FormatInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -1486,7 +1517,6 @@ public final class Plugin {
     }
 
     private int bitField0_;
-    // required int32 sampling_rate = 1;
     public static final int SAMPLING_RATE_FIELD_NUMBER = 1;
     private int samplingRate_;
     /**
@@ -1510,7 +1540,6 @@ public final class Plugin {
       return samplingRate_;
     }
 
-    // required int32 channels = 2;
     public static final int CHANNELS_FIELD_NUMBER = 2;
     private int channels_;
     /**
@@ -1541,7 +1570,8 @@ public final class Plugin {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasSamplingRate()) {
         memoizedIsInitialized = 0;
@@ -1661,10 +1691,15 @@ public final class Plugin {
     }
     /**
      * Protobuf type {@code omnimusic.FormatInfo}
+     *
+     * <pre>
+     * OPCODE_FORMATINFO = 4
+     * </pre>
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements omnimusic.Plugin.FormatInfoOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:omnimusic.FormatInfo)
+        omnimusic.Plugin.FormatInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return omnimusic.Plugin.internal_static_omnimusic_FormatInfo_descriptor;
@@ -1794,7 +1829,6 @@ public final class Plugin {
       }
       private int bitField0_;
 
-      // required int32 sampling_rate = 1;
       private int samplingRate_ ;
       /**
        * <code>required int32 sampling_rate = 1;</code>
@@ -1843,7 +1877,6 @@ public final class Plugin {
         return this;
       }
 
-      // required int32 channels = 2;
       private int channels_ ;
       /**
        * <code>required int32 channels = 2;</code>
@@ -1903,10 +1936,10 @@ public final class Plugin {
     // @@protoc_insertion_point(class_scope:omnimusic.FormatInfo)
   }
 
-  public interface BufferInfoOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
+  public interface BufferInfoOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:omnimusic.BufferInfo)
+      com.google.protobuf.MessageOrBuilder {
 
-    // required int32 samples = 1;
     /**
      * <code>required int32 samples = 1;</code>
      *
@@ -1924,7 +1957,6 @@ public final class Plugin {
      */
     int getSamples();
 
-    // required int32 stutter = 2;
     /**
      * <code>required int32 stutter = 2;</code>
      *
@@ -1944,10 +1976,15 @@ public final class Plugin {
   }
   /**
    * Protobuf type {@code omnimusic.BufferInfo}
+   *
+   * <pre>
+   * OPCODE_BUFFERINFO = 5
+   * </pre>
    */
   public static final class BufferInfo extends
-      com.google.protobuf.GeneratedMessage
-      implements BufferInfoOrBuilder {
+      com.google.protobuf.GeneratedMessage implements
+      // @@protoc_insertion_point(message_implements:omnimusic.BufferInfo)
+      BufferInfoOrBuilder {
     // Use BufferInfo.newBuilder() to construct.
     private BufferInfo(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
@@ -2043,7 +2080,6 @@ public final class Plugin {
     }
 
     private int bitField0_;
-    // required int32 samples = 1;
     public static final int SAMPLES_FIELD_NUMBER = 1;
     private int samples_;
     /**
@@ -2067,7 +2103,6 @@ public final class Plugin {
       return samples_;
     }
 
-    // required int32 stutter = 2;
     public static final int STUTTER_FIELD_NUMBER = 2;
     private int stutter_;
     /**
@@ -2098,7 +2133,8 @@ public final class Plugin {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized == 1) return true;
+      if (isInitialized == 0) return false;
 
       if (!hasSamples()) {
         memoizedIsInitialized = 0;
@@ -2218,10 +2254,15 @@ public final class Plugin {
     }
     /**
      * Protobuf type {@code omnimusic.BufferInfo}
+     *
+     * <pre>
+     * OPCODE_BUFFERINFO = 5
+     * </pre>
      */
     public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements omnimusic.Plugin.BufferInfoOrBuilder {
+        com.google.protobuf.GeneratedMessage.Builder<Builder> implements
+        // @@protoc_insertion_point(builder_implements:omnimusic.BufferInfo)
+        omnimusic.Plugin.BufferInfoOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return omnimusic.Plugin.internal_static_omnimusic_BufferInfo_descriptor;
@@ -2351,7 +2392,6 @@ public final class Plugin {
       }
       private int bitField0_;
 
-      // required int32 samples = 1;
       private int samples_ ;
       /**
        * <code>required int32 samples = 1;</code>
@@ -2400,7 +2440,6 @@ public final class Plugin {
         return this;
       }
 
-      // required int32 stutter = 2;
       private int stutter_ ;
       /**
        * <code>required int32 stutter = 2;</code>
@@ -2460,27 +2499,27 @@ public final class Plugin {
     // @@protoc_insertion_point(class_scope:omnimusic.BufferInfo)
   }
 
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_omnimusic_AudioData_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_omnimusic_AudioData_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_omnimusic_AudioResponse_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_omnimusic_AudioResponse_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_omnimusic_Request_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_omnimusic_Request_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_omnimusic_FormatInfo_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_omnimusic_FormatInfo_fieldAccessorTable;
-  private static com.google.protobuf.Descriptors.Descriptor
+  private static final com.google.protobuf.Descriptors.Descriptor
     internal_static_omnimusic_BufferInfo_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
@@ -2504,47 +2543,47 @@ public final class Plugin {
       " \002(\005\022\017\n\007stutter\030\002 \002(\005"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
-      new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
-        public com.google.protobuf.ExtensionRegistry assignDescriptors(
-            com.google.protobuf.Descriptors.FileDescriptor root) {
-          descriptor = root;
-          internal_static_omnimusic_AudioData_descriptor =
-            getDescriptor().getMessageTypes().get(0);
-          internal_static_omnimusic_AudioData_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_omnimusic_AudioData_descriptor,
-              new java.lang.String[] { "Samples", });
-          internal_static_omnimusic_AudioResponse_descriptor =
-            getDescriptor().getMessageTypes().get(1);
-          internal_static_omnimusic_AudioResponse_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_omnimusic_AudioResponse_descriptor,
-              new java.lang.String[] { "Written", });
-          internal_static_omnimusic_Request_descriptor =
-            getDescriptor().getMessageTypes().get(2);
-          internal_static_omnimusic_Request_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_omnimusic_Request_descriptor,
-              new java.lang.String[] { "Request", });
-          internal_static_omnimusic_FormatInfo_descriptor =
-            getDescriptor().getMessageTypes().get(3);
-          internal_static_omnimusic_FormatInfo_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_omnimusic_FormatInfo_descriptor,
-              new java.lang.String[] { "SamplingRate", "Channels", });
-          internal_static_omnimusic_BufferInfo_descriptor =
-            getDescriptor().getMessageTypes().get(4);
-          internal_static_omnimusic_BufferInfo_fieldAccessorTable = new
-            com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_omnimusic_BufferInfo_descriptor,
-              new java.lang.String[] { "Samples", "Stutter", });
-          return null;
-        }
-      };
+        new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
+          public com.google.protobuf.ExtensionRegistry assignDescriptors(
+              com.google.protobuf.Descriptors.FileDescriptor root) {
+            descriptor = root;
+            return null;
+          }
+        };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
+    internal_static_omnimusic_AudioData_descriptor =
+      getDescriptor().getMessageTypes().get(0);
+    internal_static_omnimusic_AudioData_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_omnimusic_AudioData_descriptor,
+        new java.lang.String[] { "Samples", });
+    internal_static_omnimusic_AudioResponse_descriptor =
+      getDescriptor().getMessageTypes().get(1);
+    internal_static_omnimusic_AudioResponse_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_omnimusic_AudioResponse_descriptor,
+        new java.lang.String[] { "Written", });
+    internal_static_omnimusic_Request_descriptor =
+      getDescriptor().getMessageTypes().get(2);
+    internal_static_omnimusic_Request_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_omnimusic_Request_descriptor,
+        new java.lang.String[] { "Request", });
+    internal_static_omnimusic_FormatInfo_descriptor =
+      getDescriptor().getMessageTypes().get(3);
+    internal_static_omnimusic_FormatInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_omnimusic_FormatInfo_descriptor,
+        new java.lang.String[] { "SamplingRate", "Channels", });
+    internal_static_omnimusic_BufferInfo_descriptor =
+      getDescriptor().getMessageTypes().get(4);
+    internal_static_omnimusic_BufferInfo_fieldAccessorTable = new
+      com.google.protobuf.GeneratedMessage.FieldAccessorTable(
+        internal_static_omnimusic_BufferInfo_descriptor,
+        new java.lang.String[] { "Samples", "Stutter", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

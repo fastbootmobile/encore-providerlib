@@ -27,7 +27,7 @@ LOCAL_SRC_FILES := \
 LOCAL_CPP_EXTENSION := .cc .cpp
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/../protobuf/src
 
-LOCAL_CFLAGS := -DGOOGLE_PROTOBUF_NO_RTTI -Wall -Werror
+LOCAL_CFLAGS := -DGOOGLE_PROTOBUF_NO_RTTI -Wall -Werror -Wno-sign-compare
 
 # Optimization CFLAGS
 LOCAL_CFLAGS += -ffast-math -O3 -funroll-loops
