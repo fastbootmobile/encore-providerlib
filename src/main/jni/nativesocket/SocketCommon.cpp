@@ -147,11 +147,11 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
     long approximate_time_us = 0;
 
     if (wait_for_response) {
-        // Wait max. about 500 milliseconds for a response
-        while (m_iWrittenSamples < 0 && approximate_time_us < 500 * 1000) {
-            // Wait 1ms
-            usleep(1000);
-            approximate_time_us += 1000;
+        // Wait max. about 100 milliseconds for a response
+        while (m_iWrittenSamples < 0 && approximate_time_us < 100 * 1000) {
+            // Wait 0.2ms
+            usleep(200);
+            approximate_time_us += 200;
         }
         return m_iWrittenSamples;
     } else {
