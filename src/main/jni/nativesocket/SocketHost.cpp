@@ -18,9 +18,10 @@
 #include "SocketCommon.h"
 #include <errno.h>
 #include <netdb.h>
+#include <unistd.h>
+#include <netinet/tcp.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include <sys/un.h>
 #include <string>
 #include <thread>
@@ -150,7 +151,6 @@ void SocketHost::processEventsThread() {
             close(m_Client);
             m_Client = -1;
         }
-        usleep(1000);
     }
 }
 // -------------------------------------------------------------------------------------
@@ -197,8 +197,7 @@ int SocketHost::processEvents() {
 
     // Now that we have the message size, we can keep on reading the following data
     while (total_len_read < final_size) {
-        len_read = recv(m_Client, &m_pBuffer[total_len_read], final_size - total_len_read,
-                MSG_WAITALL);
+        len_read = recv(m_Client, &m_pBuffer[total_len_read], final_size - total_len_read, 0);
 
         if (len_read < 0) {
             if (errno == EINTR) {

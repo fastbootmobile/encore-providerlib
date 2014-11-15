@@ -251,6 +251,7 @@ public abstract class AudioSocket {
             outStream.write(intToByte(msg.getSerializedSize() + 1));
             outStream.write(OPCODE_AUDIODATA);
             outStream.write(msg.toByteArray());
+            outStream.flush();
         }
     }
 
@@ -281,6 +282,7 @@ public abstract class AudioSocket {
                 outStream.write(intToByte(msg.getSerializedSize() + 1));
                 outStream.write(OPCODE_AUDIODATA);
                 outStream.write(msg.toByteArray());
+                outStream.flush();
             } else {
                 throw new IOException("Cannot write audio data, socket hasn't been opened");
             }
