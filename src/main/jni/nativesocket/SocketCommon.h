@@ -21,6 +21,7 @@
 #include <google/protobuf/message.h>
 #include <atomic>
 #include <mutex>
+#include <condition_variable>
 
 // Keep in tune with Java
 enum MessageType {
@@ -93,8 +94,11 @@ class SocketCommon {
  protected:
     std::string m_SocketName;
     SocketCallbacks* m_pCallback;
-    std::atomic<bool> m_bWaitingAudioResponse;
+
+    // Internal handling of written samples with writeAudioData
+    std::mutex m_WrittenMutex;
     std::atomic<int> m_iWrittenSamples;
+    std::condition_variable m_WrittenCondition;
 };
 
 #endif  // SRC_MAIN_JNI_NATIVESOCKET_SOCKETCOMMON_H_

@@ -24,7 +24,7 @@
 
 // -------------------------------------------------------------------------------------
 SocketCommon::SocketCommon(const std::string& socket_name) : m_SocketName(socket_name),
-        m_pCallback(nullptr), m_bWaitingAudioResponse(false), m_iWrittenSamples(0) {
+        m_pCallback(nullptr), m_iWrittenSamples(0) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
 }
 // -------------------------------------------------------------------------------------
@@ -75,9 +75,11 @@ int SocketCommon::processMessage(const int8_t* data, const int message_size,
                     m_pCallback->onAudioResponse(this, message.written());
                 }
 
-                if (m_bWaitingAudioResponse) {
+                {
+                    // Notify of the response internally for writeAudioData, if needed
+                    std::unique_lock<std::mutex> lock(m_WrittenMutex);
                     m_iWrittenSamples = message.written();
-                    m_bWaitingAudioResponse = false;
+                    m_WrittenCondition.notify_all();
                 }
             }
             break;
@@ -138,23 +140,28 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
     msg.set_samples(data, len);
 
     if (wait_for_response) {
-        m_iWrittenSamples = -1;
-        m_bWaitingAudioResponse = true;
-    }
+        // Wait max. about 100 milliseconds for a response. Note that we lock the mutex first
+        // so that we don't miss the notify event in case we get the response so fast the lock
+        // doesn't even have time to get in place.
+        {
+            std::unique_lock<std::mutex> lock(m_WrittenMutex);
 
-    writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
+            // Send the message
+            writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
 
-    long approximate_time_us = 0;
-
-    if (wait_for_response) {
-        // Wait max. about 100 milliseconds for a response
-        while (m_iWrittenSamples < 0 && approximate_time_us < 100 * 1000) {
-            // Wait 0.2ms
-            usleep(200);
-            approximate_time_us += 200;
+            // Wait 100ms max for the reply
+            auto now = std::chrono::system_clock::now();
+            if (m_WrittenCondition.wait_until(lock, now + std::chrono::milliseconds(100))
+                    == std::cv_status::timeout) {
+                ALOGW("Timed out waiting for sink written reply");
+                m_iWrittenSamples = 0;
+            }
         }
+
         return m_iWrittenSamples;
     } else {
+        // No wait - send and return the amount written to the socket
+        writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
         return len;
     }
 }

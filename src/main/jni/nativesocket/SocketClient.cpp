@@ -91,8 +91,8 @@ bool SocketClient::initialize() {
 }
 // -------------------------------------------------------------------------------------
 bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
-    uint32_t len_left = len;
-    uint32_t len_written = 0;
+    int32_t len_left = len;
+    int32_t len_written = 0;
 
     // Loop until all is sent
     while (len_left > 0) {
@@ -102,7 +102,7 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
             // An error occured.
             if (errno == EINTR) {
                 // The socket call was interrupted, we can try again
-                continue;
+                return false;
             } else {
                 // A more dangerous error occurred, bail out
                 ALOGE("Error during send(): %s (%d)", strerror(errno), errno);
