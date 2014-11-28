@@ -29,6 +29,13 @@ import org.omnirom.music.providers.ProviderIdentifier;
 interface IProviderCallback {
 
     /**
+     * Returns the unique identifier code of this callback. When calling unregisterCallback
+     * on the provider, you must match the callback identifier as the object proxy will
+     * be different.
+     */
+    int getIdentifier();
+
+    /**
      * Called by the provider when a feedback is available about a login request
      *
      * @param success Whether or not the login succeeded
