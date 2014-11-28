@@ -119,7 +119,8 @@ public class Album extends BoundEntity {
     public boolean isIdentical(Object other) {
         if (other instanceof Album) {
             Album remote = (Album) other;
-            if (remote.getName().equals(getName()) && remote.getRef().equals(getRef())) {
+            if (remote.getName() != null && remote.getName().equals(getName())
+                    && remote.getRef().equals(getRef())) {
                 Iterator<String> remoteSongs = remote.songs();
                 Iterator<String> ourSongs = songs();
 
