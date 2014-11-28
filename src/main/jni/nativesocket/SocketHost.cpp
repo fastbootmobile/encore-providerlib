@@ -139,8 +139,8 @@ void SocketHost::processEventsThread() {
             // Wait for a client
             m_Client = accept(m_Server, NULL, NULL);
             if (m_Client < 0) {
-                ALOGE("Error in accept(): %s", strerror(errno));
-                continue;
+                ALOGE("Error in accept(): %s (m_Server=%d)", strerror(errno), m_Server);
+                return;
             }
             ALOGE("Client connected");
         }

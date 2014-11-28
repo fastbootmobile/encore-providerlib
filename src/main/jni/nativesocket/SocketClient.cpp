@@ -100,15 +100,9 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
 
         if (len_written < 0) {
             // An error occured.
-            if (errno == EINTR) {
-                // The socket call was interrupted, we can try again
-                return false;
-            } else {
-                // A more dangerous error occurred, bail out
-                ALOGE("Error during send(): %s (%d)", strerror(errno), errno);
-                perror("write");
-                return false;
-            }
+            ALOGE("Error during send(): %s (%d)", strerror(errno), errno);
+            perror("write");
+            return false;
         } else if (len_written == 0) {
             // Socket is closed
             ALOGE("Socket is closed");
@@ -139,17 +133,12 @@ int SocketClient::processEvents() {
     const uint32_t header_size = 5;
 
     while (total_len_read < header_size) {
-        len_read = recv(m_Server, &m_pBuffer[total_len_read], header_size - total_len_read, 0);
+        len_read = recv(m_Server, &m_pBuffer[total_len_read], header_size - total_len_read,
+                MSG_WAITALL);
 
         if (len_read < 0) {
-            if (errno == EINTR) {
-                // The socket call was interrupted, we can try again
-                return -1;
-            } else {
-                // A more dangerous error occurred, bail out
-                ALOGE("Error while reading from socket: %s (%d)!", strerror(errno), errno);
-                return -1;
-            }
+            ALOGE("Error while reading from socket: %s (%d)!", strerror(errno), errno);
+            return -1;
         } else if (len_read == 0) {
             // Socket is closed
             return -1;
@@ -175,14 +164,9 @@ int SocketClient::processEvents() {
         len_read = recv(m_Server, &m_pBuffer[total_len_read], final_size - total_len_read, 0);
 
         if (len_read < 0) {
-            if (errno == EINTR) {
-                // The socket call was interrupted
-                return -1;
-            } else {
-                // A more dangerous error occurred, bail out
-                ALOGE("Error while reading from socket!");
-                return -1;
-            }
+            // A more dangerous error occurred, bail out
+            ALOGE("Error while reading from socket!");
+            return -1;
         } else if (len_read == 0) {
             // Socket is closed
             return -1;
