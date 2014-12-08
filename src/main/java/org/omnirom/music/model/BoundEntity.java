@@ -172,7 +172,11 @@ public abstract class BoundEntity implements Parcelable {
     public boolean equals(Object o) {
         if (o instanceof BoundEntity) {
             BoundEntity ent = (BoundEntity) o;
-            return mRef.equals(ent.getRef());
+            if (mRef != null) {
+                return mRef.equals(ent.getRef());
+            } else {
+                return null == ent.getRef();
+            }
         } else {
             return false;
         }

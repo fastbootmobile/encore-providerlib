@@ -121,14 +121,20 @@ bool SocketCommon::writeProtoBufMessage(uint8_t opcode, const ::google::protobuf
     const int size_with_header = size + 5;
     uint8_t* socket_buffer = reinterpret_cast<uint8_t*>(malloc(size_with_header));
 
+    // ALOGE("Writing protobuf message size %d", size);
+
     // header
     convertInt32ToBytes(size + 1, socket_buffer);  // + 1 for opcode byte, see Java
     socket_buffer[4] = opcode;
+
+    // ALOGE("Writing opcode %d", opcode);
 
     // message
     msg.SerializeToArray(&(socket_buffer[5]), size);
 
     bool result = writeToSocket(socket_buffer, size_with_header);
+
+    // ALOGE("Wrote");
 
     free(socket_buffer);
 
