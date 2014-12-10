@@ -52,6 +52,7 @@ class SocketCommon {
     // Write an AUDIO_DATA message. If wait_for_response is true, the method call will wait
     // for the other end to reply the number of samples written, and that value will be returned.
     // If wait_for_response is false, writeAudioData will return 'len' once the write call is done.
+    // In case of error, it will return -1
     int32_t writeAudioData(const void* data, const uint32_t len, bool wait_for_response = false);
 
     // Write an AUDIO_RESPONSE message

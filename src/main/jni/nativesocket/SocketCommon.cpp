@@ -121,20 +121,14 @@ bool SocketCommon::writeProtoBufMessage(uint8_t opcode, const ::google::protobuf
     const int size_with_header = size + 5;
     uint8_t* socket_buffer = reinterpret_cast<uint8_t*>(malloc(size_with_header));
 
-    // ALOGE("Writing protobuf message size %d", size);
-
     // header
     convertInt32ToBytes(size + 1, socket_buffer);  // + 1 for opcode byte, see Java
     socket_buffer[4] = opcode;
-
-    // ALOGE("Writing opcode %d", opcode);
 
     // message
     msg.SerializeToArray(&(socket_buffer[5]), size);
 
     bool result = writeToSocket(socket_buffer, size_with_header);
-
-    // ALOGE("Wrote");
 
     free(socket_buffer);
 
@@ -153,7 +147,9 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
             std::unique_lock<std::mutex> lock(m_WrittenMutex);
 
             // Send the message
-            writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
+            if (!writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg)) {
+                return -1;
+            }
 
             // Wait 100ms max for the reply
             auto now = std::chrono::system_clock::now();
@@ -167,8 +163,11 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
         return m_iWrittenSamples;
     } else {
         // No wait - send and return the amount written to the socket
-        writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg);
-        return len;
+        if (!writeProtoBufMessage(MESSAGE_AUDIO_DATA, msg)) {
+            return -1;
+        } else {
+            return len;
+        }
     }
 }
 // -------------------------------------------------------------------------------------
