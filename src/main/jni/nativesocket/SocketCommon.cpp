@@ -22,14 +22,20 @@
 
 #define LOG_TAG "SocketCommon"
 
+static int gProtobufUsageCount = 0;
+
 // -------------------------------------------------------------------------------------
 SocketCommon::SocketCommon(const std::string& socket_name) : m_SocketName(socket_name),
         m_pCallback(nullptr), m_iWrittenSamples(0) {
     GOOGLE_PROTOBUF_VERIFY_VERSION;
+    gProtobufUsageCount++;
 }
 // -------------------------------------------------------------------------------------
 SocketCommon::~SocketCommon() {
-    google::protobuf::ShutdownProtobufLibrary();
+    gProtobufUsageCount--;
+    if (gProtobufUsageCount == 0) {
+        google::protobuf::ShutdownProtobufLibrary();
+    }
 }
 // -------------------------------------------------------------------------------------
 void SocketCommon::setCallback(SocketCallbacks* callback) {
