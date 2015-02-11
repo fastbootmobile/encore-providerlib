@@ -19,7 +19,6 @@ package org.omnirom.music.providers;
 import android.net.LocalServerSocket;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
-import android.os.*;
 import android.os.Process;
 import android.util.Log;
 

@@ -18,8 +18,6 @@ package org.omnirom.music.model;
 
 import android.os.Parcel;
 
-import org.omnirom.music.providers.ProviderIdentifier;
-
 public class Song extends BoundEntity {
     private String mTitle;
     private String mArtist;

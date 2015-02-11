@@ -18,7 +18,6 @@ package org.omnirom.music.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
 
 import org.omnirom.music.providers.ProviderIdentifier;
