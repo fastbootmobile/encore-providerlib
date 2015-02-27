@@ -159,7 +159,7 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
 
             // Wait 100ms max for the reply
             auto now = std::chrono::system_clock::now();
-            if (m_WrittenCondition.wait_until(lock, now + std::chrono::milliseconds(100))
+            if (m_WrittenCondition.wait_until(lock, now + std::chrono::milliseconds(150))
                     == std::cv_status::timeout) {
                 ALOGW("Timed out waiting for sink written reply");
                 m_iWrittenSamples = 0;
