@@ -154,16 +154,37 @@ public class Song extends BoundEntity {
         return mIsAvailable;
     }
 
+    @SuppressWarnings("StringEquality")
     @Override
     public boolean isIdentical(Object other) {
         if (other instanceof Song) {
             Song remote = (Song) other;
+
+            // Check for potential null values differences first
+            if (remote.getAlbum() == null && getAlbum() != null
+                    || getAlbum() == null && remote.getAlbum() != null) {
+                return false;
+            } else if (getAlbum() != null && !getAlbum().equals(remote.getAlbum())) {
+                return false;
+            }
+
+            if (remote.getArtist() == null && getArtist() != null
+                    || getArtist() == null && remote.getArtist() != null) {
+                return false;
+            } else if (getArtist() != null && !getArtist().equals(remote.getArtist())) {
+                return false;
+            }
+
+            if (remote.getTitle() == null && getTitle() != null
+                    || getTitle() == null && remote.getTitle() != null) {
+                return false;
+            } else if (getTitle() != null && !getTitle().equals(remote.getTitle())) {
+                return false;
+            }
+
             return (
                     remote.getRef().equals(getRef()) &&
                             remote.isLoaded() == isLoaded() &&
-                            remote.getAlbum().equals(getAlbum()) &&
-                            remote.getArtist().equals(getArtist()) &&
-                            remote.getTitle().equals(getTitle()) &&
                             remote.getYear() == getYear() &&
                             remote.getDuration() == getDuration() &&
                             remote.getOfflineStatus() == getOfflineStatus() &&
