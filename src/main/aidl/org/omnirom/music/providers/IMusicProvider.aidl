@@ -121,11 +121,17 @@ interface IMusicProvider {
 
     /**
      * Returns the list of all songs
-     * This method call is only valid when isInfinite returns false
+     * This method call is only valid when isInfinite returns false. This method could return
+     * a lot of entries, however the Android IPC binder system has a limited size of 512KB to 1MB
+     * buffer depending on the device and the state of the buffer. In order to avoid transaction
+     * failures due to a too large transaction, the app will query songs in a fixed size batch.
      *
-     * @return A list of all songs available on the provider
+     * @param offset The offset at which the list of songs needs to be loaded
+     * @param limit The maximum number of songs in the list
+     * @return A list of all songs available on the provider in the requested [offset, offset+limit]
+     *         range. It may be null if there are no songs or no songs in that range.
      */
-    List<Song> getSongs();
+    List<Song> getSongs(int offset, int limit);
 
     /**
      * Returns the list of all playlists on this provider
