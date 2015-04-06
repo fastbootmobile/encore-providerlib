@@ -50,7 +50,7 @@ interface IProviderCallback {
     /**
      * Called by the provider when a Playlist has been added or updated. The app's provider
      * syndicator will automatically update the local cache of playlists based on the playlist
-     * name.
+     * reference.
      * @param p The playlist that has been updated
      */
     void onPlaylistAddedOrUpdated(in ProviderIdentifier provider, in Playlist p);
