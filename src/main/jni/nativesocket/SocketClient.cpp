@@ -87,6 +87,10 @@ bool SocketClient::initialize() {
 
     // Start poll thread
     m_EventThread = std::thread(&SocketClient::processEventsThread, this);
+
+    // Raise priority to prevent underruns on low-end devices under high load
+    nice(-10);
+
     return true;
 }
 // -------------------------------------------------------------------------------------
