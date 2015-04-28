@@ -152,7 +152,7 @@ void SocketHost::processEventsThread() {
             m_Client = -1;
         }
 
-        usleep(1000);
+        usleep(1);
     }
 }
 // -------------------------------------------------------------------------------------
@@ -165,7 +165,8 @@ int SocketHost::processEvents() {
     const int32_t header_size = 5;
 
     while (total_len_read < header_size) {
-        len_read = recv(m_Client, &m_pBuffer[total_len_read], header_size - total_len_read, 0);
+        len_read = recv(m_Client, &m_pBuffer[total_len_read], header_size - total_len_read,
+                0);
 
         if (len_read < 0) {
             if (errno == EINTR) {

@@ -124,7 +124,7 @@ void SocketClient::processEventsThread() {
         if (processEvents() < 0) {
             break;
         }
-        usleep(1000);
+        usleep(1);
     }
 }
 // -------------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ int SocketClient::processEvents() {
 
     while (total_len_read < header_size) {
         len_read = recv(m_Server, &m_pBuffer[total_len_read], header_size - total_len_read,
-                MSG_WAITALL);
+                0);
 
         if (len_read < 0) {
             ALOGE("Error while reading from socket: %s (%d)!", strerror(errno), errno);
