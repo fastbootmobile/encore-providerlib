@@ -151,6 +151,8 @@ void SocketHost::processEventsThread() {
             close(m_Client);
             m_Client = -1;
         }
+
+        usleep(1000);
     }
 }
 // -------------------------------------------------------------------------------------
