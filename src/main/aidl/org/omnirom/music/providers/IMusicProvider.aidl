@@ -39,27 +39,32 @@ import org.omnirom.music.providers.IArtCallback;
  */
 interface IMusicProvider {
     /**
-     * Returns the API Version of this provider.
+     * Returns the API Version used by this provider.
      * Providers must return Constants.API_VERSION to make sure to return the actual value from
-     * providerlib and avoir mistakes when updating.
+     * providerlib and avoid mistakes when updating.
      */
     int getVersion();
 
     /**
      * Sets the Provider Identifier for this provider. The service must retain this identifier
-     * and pass it on every callback
+     * and pass it on every callback to tell the app the source.
      */
     void setIdentifier(in ProviderIdentifier identifier);
 
     /**
      * Register a callback for the app to be notified of events. Remember that the providers calls
-     * should all be asynchronous (every request must return immediately, and the result be posted
-     * later on to all the callbacks registered here).
+     * should be asynchronous whenever possible. For example, if your data isn't immediately
+     * available (if you need to fetch it from the Web), return an entity with the final reference
+     * and set the loaded flag to 'false'. Then, when the final data is available, update it
+     * via the IProviderCallback methods (onSongUpdate, onAlbumUpdate, etc).
+     * On the other hand, if your data is quickly available (cached, etc), you can return the
+     * object with filled data without the need to call onXxxUpdated.
      */
     void registerCallback(IProviderCallback cb);
 
     /**
-     * Removes a registered callback
+     * Removes a registered callback. Make sure to unregister callbacks using callback's identifiers
+     * and not using the callback object's equals method.
      */
     void unregisterCallback(IProviderCallback cb);
 
@@ -68,6 +73,8 @@ interface IMusicProvider {
      * user entered his login and password to authenticate to the service in the configuration
      * activity).
      * As long as this returns false, the app won't try to login or do any action on the provider.
+     * The app will check on resume, so it is advised to use "isSetup" only if you need to force
+     * the user to go through your settings/setup activity.
      *
      * @returns true if the provider is configured and ready to use
      */
@@ -156,7 +163,9 @@ interface IMusicProvider {
      * The provider may not return all the information immediately, and must set the IsLoaded
      * flag accordingly.
      * Song information should be then updated with onSongUpdate callback.
-     * It must not return null however.
+     * Note that a Song doesn't necessarily have an album or artist reference attached, if
+     * that information isn't available.
+     * It must not return null however, unless the reference is invalid.
      *
      * @param ref The reference of the song
      */
@@ -167,7 +176,7 @@ interface IMusicProvider {
      * The provider may not return all the information immediately, and must set the IsLoaded
      * flag accordingly.
      * Artist information should be then updated with onArtistUpdate callback.
-     * It must not return null however.
+     * It must not return null however, unless the reference is invalid.
      *
      * @param ref The reference of the artist
      */
@@ -178,7 +187,7 @@ interface IMusicProvider {
      * The provider may not return all the information immediately, and must set the IsLoaded
      * flag accordingly.
      * Album information should be then updated with onAlbumUpdate callback.
-     * It must not return null however.
+     * It must not return null however, unless the reference is invalid.
      *
      * @param ref The reference of the album
      */
@@ -189,7 +198,7 @@ interface IMusicProvider {
      * The provider may not return all the information immediately, and must set the IsLoaded
      * flag accordingly.
      * Playlist information should be then updated with onPlaylistUpdate callback.
-     * It must not return null however.
+     * It must not return null however, unless the reference is invalid.
      *
      * @param ref The reference of the playlist
      */
@@ -197,7 +206,8 @@ interface IMusicProvider {
 
     /**
      * Returns a bitmap for the given entity. This method isn't mandatory and may return false at
-     * all times if the provider isn't capable of returning a song art
+     * all times if the provider isn't capable of returning a song art. When this method returns
+     * false, the app will manually fetch art from the Web.
      *
      * @param entity The entity for which we want the bitmap
      * @param callback The callback that will be called when the bitmap is ready
@@ -265,7 +275,7 @@ interface IMusicProvider {
      * Providers may choose to implement or not this method - it is called by the app so that
      * the provider can prepare the next song, but no particular result is expected.
      *
-     * @param ref The unique reference of the song
+     * @param ref The unique reference of the song to prepare
      */
     void prefetchSong(String ref);
 

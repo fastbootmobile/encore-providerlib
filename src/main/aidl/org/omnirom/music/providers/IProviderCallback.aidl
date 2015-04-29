@@ -26,24 +26,36 @@ import org.omnirom.music.model.SearchResult;
 
 import org.omnirom.music.providers.ProviderIdentifier;
 
+/**
+ * This class represents callbacks made from the provider to the main app. It is used
+ * to notify the app of various events that happened (song playback started, track finished,
+ * artist browse result, etc).
+ * Providers must call the methods here when relevant events happen. For example,
+ * when a track starts playing, the provider must call the "onSongPlaying" method of all
+ * the callbacks registered to it.
+ * Calls are thread-safe on the app's side and thus don't necessarily need to be called from
+ * the provider's main event loop.
+ */
 interface IProviderCallback {
 
     /**
      * Returns the unique identifier code of this callback. When calling unregisterCallback
-     * on the provider, you must match the callback identifier as the object proxy will
+     * on the provider, you must match this callback identifier as the object proxy will
      * be different.
      */
     int getIdentifier();
 
     /**
-     * Called by the provider when a feedback is available about a login request
+     * Called by the provider when a feedback is available about a login request. Offline
+     * providers don't need to call this method.
      *
      * @param success Whether or not the login succeeded
      */
     void onLoggedIn(in ProviderIdentifier provider, boolean success);
 
     /**
-     * Called by the provider when the user login has expired, or has been kicked.
+     * Called by the provider when the user login has expired, or has been kicked from
+     * the service. Offline providers don't need to call this method.
      */
     void onLoggedOut(in ProviderIdentifier provider);
 
@@ -56,7 +68,9 @@ interface IProviderCallback {
     void onPlaylistAddedOrUpdated(in ProviderIdentifier provider, in Playlist p);
 
     /**
-     * Called by the provider when the details of a song have been updated.
+     * Called by the provider when the information of a song has been updated. The app
+     * will automatically merge the information with its local cache based on the song's
+     * reference.
      * @param s The song that has been updated
      */
     void onSongUpdate(in ProviderIdentifier provider, in Song s);
@@ -83,7 +97,8 @@ interface IProviderCallback {
      void onGenreUpdate(in ProviderIdentifier provider, in Genre g);
 
     /**
-     * Called by the provider when a song starts playing
+     * Called by the provider when a song starts playing, either when a requested song
+     * started playing, or when the track was paused and resumed.
      */
     void onSongPlaying(in ProviderIdentifier provider);
 
@@ -99,7 +114,8 @@ interface IProviderCallback {
     void onTrackEnded(in ProviderIdentifier provider);
 
     /**
-     *
+     * Called by the provider when a requested search completed, to provide the main app
+     * results found.
      */
     void onSearchResult(in SearchResult searchResult);
 
