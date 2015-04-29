@@ -138,9 +138,9 @@ both full Java, or fully native code.
     - There is a separate ``omnimusic.Plugin`` class which contains generated code for the socket's
       protobuf protocol. You should not need to deal with this class directly, besides the fields
       used in ``ISocketCallbacks``.
-  - The JNI folder contains the native implementation of the audio socket communication protocol.
-    In a similar way to Java, there is a ``SocketClient`` and a ``SocketCallbacks`` to communicate
-    with the main app and get responses.
+- The JNI folder contains the native implementation of the audio socket communication protocol.
+  In a similar way to Java, there is a ``SocketClient`` and a ``SocketCallbacks`` to communicate
+  with the main app and get responses.
 
 ## Getting started
 
