@@ -121,16 +121,19 @@ bool SocketClient::writeToSocket(const uint8_t* data, uint32_t len) {
 // -------------------------------------------------------------------------------------
 void SocketClient::processEventsThread() {
     while (m_Server >= 0) {
+        //ALOGE("Calling processEvents");
         if (processEvents() < 0) {
             break;
         }
-        usleep(1);
+        // usleep(1);
     }
 }
 // -------------------------------------------------------------------------------------
 int SocketClient::processEvents() {
     int32_t len_read = 0;
     uint32_t total_len_read = 0;
+
+    //ALOGE("in processEvents");
 
     // Before processing the protobuf structure itself, we first read the message size (4 bytes)
     // and the opcode (one byte), so 5 bytes total
@@ -179,6 +182,8 @@ int SocketClient::processEvents() {
     }
 
     processMessage(m_pBuffer, message_size, message_type);
+
+    //ALOGE("Read message");
 
     return 0;
 }
