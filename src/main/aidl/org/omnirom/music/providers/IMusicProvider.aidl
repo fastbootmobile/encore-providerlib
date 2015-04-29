@@ -318,6 +318,14 @@ interface IMusicProvider {
     boolean deletePlaylist(String playlistRef);
 
     /**
+     * Requests the provider to rename a playlist
+     * @param ref The unique reference of the playlist
+     * @param title The new title for the playlist
+     * @return true if rename was successful
+     */
+    boolean renamePlaylist(String ref, String title);
+
+    /**
      * Requests the provider to delete a song of a playlist
      * @param ref the unique reference of the playlist
      * @return true if the song is deleted
