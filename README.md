@@ -39,6 +39,12 @@ false using ``entity.setIsLoaded(false)``. Later, when the data has been fetched
 thread, you can call the relevant method (``onSongUpdated``, etc) on the registered callbacks to
 notify of the full entity data.
 
+> Important note: When fetching a set of tracks, for example a playlist, the app will request
+> the track information using getSong() if the track isn't already known. If the track is known,
+> but not loaded (isLoaded() returns false and setIsLoaded(true) hasn't been called), the app
+> won't request getSong again and relies on onSongUpdate() callback.
+
+
 ### Audio data
 #### General workflow
 The actual audio data is transferred through a local domain UNIX socket, which is assigned by the
