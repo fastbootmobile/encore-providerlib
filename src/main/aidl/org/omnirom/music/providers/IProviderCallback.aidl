@@ -68,6 +68,12 @@ interface IProviderCallback {
     void onPlaylistAddedOrUpdated(in ProviderIdentifier provider, in Playlist p);
 
     /**
+     * Called by the provider when a Playlist has been removed from the user playlists container.
+     * @param ref The reference of the playlist that has been removed
+     */
+    void onPlaylistRemoved(in ProviderIdentifier provider, String ref);
+
+    /**
      * Called by the provider when the information of a song has been updated. The app
      * will automatically merge the information with its local cache based on the song's
      * reference.
