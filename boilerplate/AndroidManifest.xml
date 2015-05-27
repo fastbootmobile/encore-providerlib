@@ -14,17 +14,17 @@
             android:name=".PluginService"
             android:exported="true">
             <intent-filter>
-                <action android:name="org.omnirom.music.action.PICK_PROVIDER" />
+                <action android:name="com.fastbootmobile.encore.action.PICK_PROVIDER" />
             </intent-filter>
 
             <meta-data
-                android:name="org.omnirom.music.metadata.PROVIDER_NAME"
+                android:name="com.fastbootmobile.encore.metadata.PROVIDER_NAME"
                 android:value="<Provider name>" />
             <meta-data
-                android:name="org.omnirom.music.metadata.PROVIDER_AUTHOR"
+                android:name="com.fastbootmobile.encore.metadata.PROVIDER_AUTHOR"
                 android:value="<Author name>" />
             <meta-data
-                android:name="org.omnirom.music.metadata.CONFIG_CLASS"
+                android:name="com.fastbootmobile.encore.metadata.CONFIG_CLASS"
                 android:value="mypackage.SettingsActivity"/>
         </service>
 

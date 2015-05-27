@@ -156,7 +156,7 @@ AndroidManifest and Plugin Service java files. Here are a few steps to guide you
 - Create a project and import the providerlib module (copy the folder and add the module to your
   ``settings.gradle`` file)
 - Add the required meta-data and actions in your AndroidManifest.xml
-  (see ``org.omnirom.music.providers.Constants``)
+  (see ``com.fastbootmobile.encore.providers.Constants``)
 - Create a Service and implement either ``IMusicProvider`` or ``IDSPProvider`` depending on
   whether you're working on a music provider, or a DSP processor
 - Create the Audio socket in either Java or Native code in ``setAudioSocketName``

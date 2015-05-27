@@ -7,17 +7,16 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-import org.omnirom.music.model.Album;
-import org.omnirom.music.model.Artist;
-import org.omnirom.music.model.BoundEntity;
-import org.omnirom.music.model.Genre;
-import org.omnirom.music.model.Playlist;
-import org.omnirom.music.model.Song;
-import org.omnirom.music.providers.Constants;
-import org.omnirom.music.providers.IArtCallback;
-import org.omnirom.music.providers.IMusicProvider;
-import org.omnirom.music.providers.IProviderCallback;
-import org.omnirom.music.providers.ProviderIdentifier;
+import com.fastbootmobile.encore.model.Album;
+import com.fastbootmobile.encore.model.Artist;
+import com.fastbootmobile.encore.model.Genre;
+import com.fastbootmobile.encore.model.Playlist;
+import com.fastbootmobile.encore.model.Song;
+import com.fastbootmobile.encore.providers.Constants;
+import com.fastbootmobile.encore.providers.IArtCallback;
+import com.fastbootmobile.encore.providers.IMusicProvider;
+import com.fastbootmobile.encore.providers.IProviderCallback;
+import com.fastbootmobile.encore.providers.ProviderIdentifier;
 
 import java.util.ArrayList;
 import java.util.List;
