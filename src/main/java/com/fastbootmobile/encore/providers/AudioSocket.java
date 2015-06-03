@@ -20,6 +20,7 @@ import android.util.Log;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.CodedInputStream;
+import com.google.protobuf.CodedOutputStream;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.UninitializedMessageException;
 
@@ -32,19 +33,19 @@ import omnimusic.Plugin;
 
 /**
  * Audio client socket for plugins to communicate with the main app (transmit audio data, etc).
- *
+ * <p/>
  * This class is the java equivalent of the native "nativesocket" implementation found in the
  * jni directory. Both use protobuf to serialize the data, and use the Plugin.proto declarations.
  * Both native and java implementation are interoperable, so you're free to implement your plugin
  * either fully native, or fully java (but remember, native is faster!).
- *
+ * <p/>
  * Some notes about the implementation:
- *  - All packets are prefixed with an integer (4 bytes) representing the message size, followed
- *    by a byte representing the message type (opcode). The message size MUST include the opcode
- *    byte.
- *  - The ability to push both short[] and byte[] audio data is provided. The pipeline works
- *    better with byte, and short[] methods are provided for convenience only (to reduce the
- *    amount of work needed to convert). Whenever possible, prefer the byte[] methods.
+ * - All packets are prefixed with an integer (4 bytes) representing the message size, followed
+ * by a byte representing the message type (opcode). The message size MUST include the opcode
+ * byte.
+ * - The ability to push both short[] and byte[] audio data is provided. The pipeline works
+ * better with byte, and short[] methods are provided for convenience only (to reduce the
+ * amount of work needed to convert). Whenever possible, prefer the byte[] methods.
  */
 public abstract class AudioSocket {
 
@@ -64,13 +65,15 @@ public abstract class AudioSocket {
     private String mSocketName;
 
     // Re-use messages
-    private Plugin.AudioData.Builder mAudioDataBuilder;
+    private Plugin.AudioData.Builder mRcvAudioDataBuilder;
+    private Plugin.AudioData.Builder mSndAudioDataBuilder;
     private Plugin.AudioResponse.Builder mAudioResponseBuilder;
     private Plugin.FormatInfo.Builder mFormatInfoBuilder;
     private Plugin.BufferInfo.Builder mBufferInfoBuilder;
     private Plugin.Request.Builder mRequestBuilder;
 
     private CodedInputStream mCodedInputStream;
+    private CodedOutputStream mCodedOutputStream;
 
     public AudioSocket() {
         mIntBuffer = ByteBuffer.allocateDirect(4);
@@ -80,6 +83,7 @@ public abstract class AudioSocket {
     /**
      * Connects the audio socket to the main app. In case the main app is down or hasn't
      * opened the socket yet, an IOException may be thrown. You must then retry to connect later.
+     *
      * @throws IOException
      */
     public void connect(final String socketName) throws IOException {
@@ -93,6 +97,7 @@ public abstract class AudioSocket {
 
     /**
      * Initializes the socket with the provided socketName.
+     *
      * @param socketName The name of the UNIX-domain socket file
      * @throws IOException
      */
@@ -122,6 +127,7 @@ public abstract class AudioSocket {
 
     /**
      * Sets the callback that should be called when socket event occurs (ie. incoming data)
+     *
      * @param callback The callback to use
      */
     public void setCallback(ISocketCallback callback) {
@@ -134,16 +140,17 @@ public abstract class AudioSocket {
      * In the case of DSP providers, this metadata is ignored as the music provider gives the source
      * clock and the format data is broadcast from the provider to the DSP effect (tl;dr the DSP
      * has to adapt to the input format data given by the provider).
-     * @param channels The number of audio channels (generally 2 for stereo)
+     *
+     * @param channels   The number of audio channels (generally 2 for stereo)
      * @param sampleRate The sample rate of the audio (generally 44100)
      * @throws IOException
      */
     public void writeFormatData(int channels, int sampleRate) throws IOException {
         Plugin.FormatInfo msg =
                 Plugin.FormatInfo.newBuilder()
-                .setChannels(channels)
-                .setSamplingRate(sampleRate)
-                .build();
+                        .setChannels(channels)
+                        .setSamplingRate(sampleRate)
+                        .build();
 
         final OutputStream outStream = getOutputStream();
         outStream.write(intToByte(msg.getSerializedSize() + 1));
@@ -155,6 +162,7 @@ public abstract class AudioSocket {
      * This method is used by audio sinks. It is used when a client sends a request for buffer info
      * to the main app, and will reply with the current buffering info from the currently active
      * audio sink.
+     *
      * @param samples Current number of samples in the buffer
      * @param stutter Stutter or dropout events that occurred
      * @throws IOException
@@ -162,9 +170,9 @@ public abstract class AudioSocket {
     public void writeBufferInfo(int samples, int stutter) throws IOException {
         Plugin.BufferInfo msg =
                 Plugin.BufferInfo.newBuilder()
-                .setSamples(samples)
-                .setStutter(stutter)
-                .build();
+                        .setSamples(samples)
+                        .setStutter(stutter)
+                        .build();
 
         final OutputStream outStream = getOutputStream();
         outStream.write(intToByte(msg.getSerializedSize() + 1));
@@ -179,8 +187,8 @@ public abstract class AudioSocket {
      * implement a reply. It is however invalid for a music provider to request FORMAT_INFO, as the
      * plugin must set it.
      * Two requests exist:
-     *  - BUFFER_INFO: Requests buffer stats
-     *  - FORMAT_INFO: Requests current playback format
+     * - BUFFER_INFO: Requests buffer stats
+     * - FORMAT_INFO: Requests current playback format
      * The replies will be send (if implemented and valid) with their respective opcode packets in
      * the callbacks.
      *
@@ -190,8 +198,8 @@ public abstract class AudioSocket {
     public void writeRequest(Plugin.Request.RequestType request) throws IOException {
         Plugin.Request msg =
                 Plugin.Request.newBuilder()
-                .setRequest(request)
-                .build();
+                        .setRequest(request)
+                        .build();
 
         final OutputStream outStream = getOutputStream();
         outStream.write(intToByte(msg.getSerializedSize() + 1));
@@ -202,6 +210,7 @@ public abstract class AudioSocket {
     /**
      * This method is used by audio sinks to reply to AUDIO_DATA messages, indicating the number
      * of samples that were written.
+     *
      * @param written The number of samples written
      * @throws IOException
      */
@@ -228,7 +237,7 @@ public abstract class AudioSocket {
      * between the play command and the actual playback on the device audio output, without using
      * up the device's memory.
      *
-     * @param frames The array of samples
+     * @param frames    The array of samples
      * @param numFrames The number of samples to write, from offset zero
      * @throws IOException
      */
@@ -242,10 +251,12 @@ public abstract class AudioSocket {
             mSamplesBuffer.rewind();
             mSamplesBuffer.asShortBuffer().put(frames, 0, numFrames);
 
-            Plugin.AudioData msg =
-                    Plugin.AudioData.newBuilder()
-                            .setSamples(ByteString.copyFrom(mSamplesBuffer.array(), 0, numFrames * 2))
-                            .build();
+            if (mSndAudioDataBuilder == null) {
+                mSndAudioDataBuilder = Plugin.AudioData.newBuilder();
+            }
+            Plugin.AudioData msg = mSndAudioDataBuilder
+                    .setSamples(ByteString.copyFrom(mSamplesBuffer.array(), 0, numFrames * 2))
+                    .build();
 
             final OutputStream outStream = getOutputStream();
             outStream.write(intToByte(msg.getSerializedSize() + 1));
@@ -271,16 +282,26 @@ public abstract class AudioSocket {
      */
     public void writeAudioData(byte[] frames, int offset, int length) throws IOException {
         if (length > 0) {
+            if (mSndAudioDataBuilder == null) {
+                mSndAudioDataBuilder = Plugin.AudioData.newBuilder();
+            }
+
             Plugin.AudioData msg =
-                    Plugin.AudioData.newBuilder()
+                    mSndAudioDataBuilder
                             .setSamples(ByteString.copyFrom(frames, offset, length))
                             .build();
 
+            if (mCodedOutputStream == null) {
+                mCodedOutputStream = CodedOutputStream.newInstance(getOutputStream());
+            }
+
+            final int msgSize = msg.getSerializedSize();
             final OutputStream outStream = getOutputStream();
             if (outStream != null) {
-                outStream.write(intToByte(msg.getSerializedSize() + 1));
+                outStream.write(intToByte(msgSize + 1));
                 outStream.write(OPCODE_AUDIODATA);
-                outStream.write(msg.toByteArray());
+                msg.writeTo(mCodedOutputStream);
+                mCodedOutputStream.flush();
             } else {
                 throw new IOException("Cannot write audio data, socket hasn't been opened");
             }
@@ -289,6 +310,7 @@ public abstract class AudioSocket {
 
     /**
      * Process the input stream
+     *
      * @param length Length of the message (with the opcode)
      */
     protected boolean processInputStream(int length) throws IOException {
@@ -358,18 +380,19 @@ public abstract class AudioSocket {
 
     /**
      * Process an AUDIO_DATA packet
+     *
      * @param buffer The message data buffer
      * @param length The length of the message
      */
     private void handleAudioData(byte[] buffer, int length) {
         if (mCallback != null) {
             try {
-                if (mAudioDataBuilder == null) {
-                    mAudioDataBuilder = Plugin.AudioData.newBuilder();
+                if (mRcvAudioDataBuilder == null) {
+                    mRcvAudioDataBuilder = Plugin.AudioData.newBuilder();
                 }
 
-                mAudioDataBuilder.mergeFrom(buffer, 0, length);
-                mCallback.onAudioData(this, mAudioDataBuilder);
+                mRcvAudioDataBuilder.mergeFrom(buffer, 0, length);
+                mCallback.onAudioData(this, mRcvAudioDataBuilder);
             } catch (InvalidProtocolBufferException e) {
                 Log.e(TAG, "Invalid AUDIO_DATA message", e);
             } catch (UninitializedMessageException e) {
@@ -380,6 +403,7 @@ public abstract class AudioSocket {
 
     /**
      * Process a FORMAT_INFO packet
+     *
      * @param buffer The message data buffer
      * @param length The length of the message
      */
@@ -402,6 +426,7 @@ public abstract class AudioSocket {
 
     /**
      * Process an AUDIO_RESPONSE packet
+     *
      * @param buffer The message data buffer
      * @param length The length of the message
      */
@@ -424,6 +449,7 @@ public abstract class AudioSocket {
 
     /**
      * Process a BUFFER_INFO packet
+     *
      * @param buffer The message data buffer
      * @param length The length of the message
      */
@@ -445,6 +471,7 @@ public abstract class AudioSocket {
 
     /**
      * Process a REQUEST packet
+     *
      * @param buffer The message data buffer
      * @param length The length of the message
      */
@@ -482,6 +509,7 @@ public abstract class AudioSocket {
     public interface ISocketCallback {
         /**
          * Called when an AUDIO_DATA message has been received (ie. when audio data arrived)
+         *
          * @param message The protobuf message
          */
         public void onAudioData(AudioSocket socket, Plugin.AudioData.Builder message);
@@ -489,6 +517,7 @@ public abstract class AudioSocket {
         /**
          * Called when an AUDIO_RESPONSE message has been received (ie. when audio data has
          * been delivered and the remote end sent a confirmation)
+         *
          * @param message The protobuf message
          */
         public void onAudioResponse(AudioSocket socket, Plugin.AudioResponse.Builder message);
@@ -496,18 +525,21 @@ public abstract class AudioSocket {
         /**
          * Called when a REQUEST message has been received. The remote end is expecting the response
          * to its request (see RequestType) as soon as possible.
+         *
          * @param message The protobuf message
          */
         public void onRequest(AudioSocket socket, Plugin.Request.Builder message);
 
         /**
          * Called when a FORMAT_INFO message has been received.
+         *
          * @param message The protobuf message
          */
         public void onFormatInfo(AudioSocket socket, Plugin.FormatInfo.Builder message);
 
         /**
          * Called when a BUFFER_INFO message has been received.
+         *
          * @param message The protobuf message
          */
         public void onBufferInfo(AudioSocket socket, Plugin.BufferInfo.Builder message);
