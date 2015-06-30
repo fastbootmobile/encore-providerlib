@@ -108,7 +108,10 @@ bool SocketHost::initialize() {
 // -------------------------------------------------------------------------------------
 bool SocketHost::writeToSocket(const uint8_t* data, uint32_t len) {
     if (m_Client < 0) {
-        ALOGE("Trying to write to socket '%s', but no client connected", m_SocketName.c_str());
+        if (m_Server > 0) {
+            // This message is expected if no client is bound when we shut down
+            ALOGE("Trying to write to socket '%s', but no client connected", m_SocketName.c_str());
+        }
         return false;
     }
 
@@ -145,24 +148,23 @@ bool SocketHost::writeToSocket(const uint8_t* data, uint32_t len) {
 void SocketHost::processEventsThread() {
     while (m_Server >= 0) {
         if (m_Client < 0) {
-            ALOGE("Waiting for a client");
             // Wait for a client
             m_Client = accept(m_Server, NULL, NULL);
             if (m_Client < 0) {
-                ALOGE("Error in accept(): %s (m_Server=%d)", strerror(errno), m_Server);
+                if (errno != EINVAL) {
+                    ALOGE("Error in accept(): %s (m_Server=%d)", strerror(errno), m_Server);
+                }
                 return;
             }
-            ALOGE("Client connected");
         }
 
         if (processEvents() < 0) {
-            ALOGE("processEvents returned -1");
+            ALOGW("processEvents returned -1");
+
             // Make sure client is disconnected
             close(m_Client);
             m_Client = -1;
         }
-
-        // usleep(1);
     }
 }
 // -------------------------------------------------------------------------------------
