@@ -61,7 +61,7 @@ public abstract class AudioSocket {
 
     private final ByteBuffer mIntBuffer;
     private ByteBuffer mSamplesBuffer;
-    private byte[] mInputBuffer = new byte[128000];
+    private byte[] mInputBuffer = new byte[44100];
     private ISocketCallback mCallback;
     private String mSocketName;
 
@@ -78,7 +78,7 @@ public abstract class AudioSocket {
 
     public AudioSocket() {
         mIntBuffer = ByteBuffer.allocateDirect(4);
-        mSamplesBuffer = ByteBuffer.allocateDirect(262144 * 2);
+        mSamplesBuffer = ByteBuffer.allocateDirect(8192);
     }
 
     /**
@@ -243,9 +243,15 @@ public abstract class AudioSocket {
      * @throws IOException
      */
     public void writeAudioData(short[] frames, int numFrames) throws IOException {
-        if (numFrames > mSamplesBuffer.capacity()) {
-            throw new IllegalArgumentException("You must not pass more than " +
-                    mSamplesBuffer.capacity() + " samples at a time");
+        final int numBytes = numFrames * 2;
+        if (numBytes > mSamplesBuffer.capacity() || mSamplesBuffer == null) {
+            // Allow maximum 500KB audio at a time
+            if (numBytes < 524288) {
+                mSamplesBuffer = ByteBuffer.allocateDirect(numBytes);
+            } else {
+                throw new IllegalArgumentException("You must not pass more than 524288 " +
+                        "bytes of audio at a time");
+            }
         }
 
         if (numFrames > 0) {
