@@ -29,7 +29,8 @@ enum MessageType {
     MESSAGE_AUDIO_RESPONSE  = 2,
     MESSAGE_BUFFER_INFO     = 3,
     MESSAGE_FORMAT_INFO     = 4,
-    MESSAGE_REQUEST         = 5
+    MESSAGE_REQUEST         = 5,
+    MESSAGE_SHUTDOWN        = 6
 };
 
 class SocketCommon {

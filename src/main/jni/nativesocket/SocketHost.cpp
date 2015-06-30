@@ -38,8 +38,18 @@ SocketHost::SocketHost(const std::string& socket_name) : SocketCommon(socket_nam
 }
 // -------------------------------------------------------------------------------------
 SocketHost::~SocketHost() {
+    ALOGD("Releasing socket %s (fd=%d)", m_SocketName.c_str(), m_Server);
+
+    // Java LocalSocket on Android are broken. Thank you Google for not fixing a critical bug
+    // 5 years after it is reported to you. In order to be able to not hit a deadlock in read()
+    // on the java side, we send a "shutdown" message.
+    uint8_t* socket_buffer = reinterpret_cast<uint8_t*>(malloc(5));
+    convertInt32ToBytes(1, socket_buffer);  // + 1 for opcode byte, see Java
+    socket_buffer[4] = MESSAGE_SHUTDOWN;
+    writeToSocket(socket_buffer, 5);
+
     if (m_Server >= 0) {
-        close(m_Server);
+        shutdown(m_Server, SHUT_RDWR);
         m_Server = -1;
     }
 

@@ -60,7 +60,9 @@ public class AudioClientSocket extends AudioSocket {
                     } else {
                         readDecay = 0;
                         int msgSize = byteToInt(mIntBuffer);
-                        processInputStream(msgSize);
+                        if (!processInputStream(msgSize)) {
+                            mLoopRun = false;
+                        }
                     }
                 } catch (IOException e) {
                     Log.e(TAG, "Exception while reading from socket", e);
@@ -94,6 +96,8 @@ public class AudioClientSocket extends AudioSocket {
         if (mSocket != null) {
             mLoopRun = false;
             try {
+                mInStream.close();
+                mOutStream.close();
                 mSocket.close();
             } catch (IOException e) {
                 Log.e(TAG, "Error while closing socket", e);
@@ -101,6 +105,7 @@ public class AudioClientSocket extends AudioSocket {
             mSocket = null;
 
             try {
+                mLoopThread.interrupt();
                 mLoopThread.join();
             } catch (InterruptedException e) {
                 // ignore

@@ -52,11 +52,12 @@ public abstract class AudioSocket {
     private static final String TAG = "AudioSocket";
 
     // Keep in sync with Plugin.proto and nativesocket
-    protected static final int OPCODE_AUDIODATA = 1;
-    protected static final int OPCODE_AUDIORESPONSE = 2;
-    protected static final int OPCODE_REQUEST = 3;
-    protected static final int OPCODE_FORMATINFO = 4;
-    protected static final int OPCODE_BUFFERINFO = 5;
+    protected static final int OPCODE_AUDIODATA         = 1;
+    protected static final int OPCODE_AUDIORESPONSE     = 2;
+    protected static final int OPCODE_REQUEST           = 3;
+    protected static final int OPCODE_FORMATINFO        = 4;
+    protected static final int OPCODE_BUFFERINFO        = 5;
+    protected static final int OPCODE_SHUTDOWN          = 6;
 
     private final ByteBuffer mIntBuffer;
     private ByteBuffer mSamplesBuffer;
@@ -316,6 +317,10 @@ public abstract class AudioSocket {
     protected boolean processInputStream(int length) throws IOException {
         final InputStream inStream = getInputStream();
         int opcode = inStream.read();
+
+        if (opcode == OPCODE_SHUTDOWN) {
+            return false;
+        }
 
         if (mCodedInputStream == null) {
             mCodedInputStream = CodedInputStream.newInstance(inStream);
