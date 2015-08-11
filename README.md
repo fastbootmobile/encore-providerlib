@@ -50,7 +50,7 @@ notify of the full entity data.
 The actual audio data is transferred through a local domain UNIX socket, which is assigned by the
 main application when it initializes plug-ins. It is then up to the plug-in to transfer data using
 our Java classes or our C++ classes (see ``src/main/jni/nativesocket`` or
-``src/main/java/org/omnirom/music/providers`` for C++ and Java code).
+``src/main/java/com/fastbootmobile/encore/providers`` for C++ and Java code).
 
 In the case of a music provider, the audio must be decoded (PCM) by the provider itself and
 transmitted to the main app using the socket. Here's the typical flow for music playback:
