@@ -1,8 +1,8 @@
-# OmniMusic Provider Library
+# Encore Provider Library
 
-OmniMusic's Provider Library, internally referred to as "providerlib", is the library allowing
+Encore's Provider Library, internally referred to as "providerlib", is the library allowing
 third-party developers to create music sources ("providers") and sound processing ("DSP") plug-ins
-for OmniMusic.
+for Encore.
 
 ## Overview
 ### Working
@@ -100,7 +100,7 @@ DSPs however don't need to care about the number of bytes written, as space is g
 app if you got audio data.
 
 ### Album art
-OmniMusic supports fetching album art from various web sources (MusicBrainz, Google Images, etc),
+Encore supports fetching album art from various web sources (MusicBrainz, Google Images, etc),
 but these services might sometimes be slower than a local album art, or an album art provided
 directly by the service. On calls to ``getSongArt``, ``getAlbumArt``, ``getArtistArt`` or
 ``getPlaylistArt``, providers may return true or false depending on their capability to provide an
@@ -115,7 +115,7 @@ expired, it will still be cached by the app and will show up on the next display
 after scrolling down and back up, or when closing and reopening a view).
 
 ### Project Rosetta-stone support
-OmniMusic's main app gather some information from the
+Encore's main app gather some information from the
 [EchoNest API](http://developer.echonest.com/index.html), which understands services' URIs directly
 in their database.
 
@@ -141,7 +141,7 @@ both full Java, or fully native code.
       well as the provider identifier. When sending data to the main app, you MUST use these classes.
     - The ``providers`` package, which contains the constants and the audio socket classes if you
       wish to handle the audio data purely in Java.
-    - There is a separate ``omnimusic.Plugin`` class which contains generated code for the socket's
+    - There is a separate ``Encore.Plugin`` class which contains generated code for the socket's
       protobuf protocol. You should not need to deal with this class directly, besides the fields
       used in ``ISocketCallbacks``.
 - The JNI folder contains the native implementation of the audio socket communication protocol.
