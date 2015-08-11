@@ -49,6 +49,7 @@ std::string SocketCommon::getSocketName() const {
 int SocketCommon::processMessage(const int8_t* data, const int message_size,
         const MessageType message_type) {
     // ALOGD("Message length=%d", message_size);
+
     if (message_size <= 0) {
         ALOGW("Message size invalid! (%d)", message_size);
         return -1;
@@ -145,7 +146,7 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
     msg.set_samples(data, len);
 
     if (wait_for_response) {
-        // Wait max. about 200 milliseconds for a response. Note that we lock the mutex first
+        // Wait max. about 500 milliseconds for a response. Note that we lock the mutex first
         // so that we don't miss the notify event in case we get the response so fast the lock
         // doesn't even have time to get in place.
         {
@@ -158,13 +159,10 @@ int32_t SocketCommon::writeAudioData(const void* data, const uint32_t len, bool 
 
             // Wait 100ms max for the reply
             auto now = std::chrono::system_clock::now();
-            if (m_WrittenCondition.wait_until(lock, now + std::chrono::milliseconds(200))
+            if (m_WrittenCondition.wait_until(lock, now + std::chrono::milliseconds(500))
                     == std::cv_status::timeout) {
-                // When timing out, we assume that our samples were written. It is possible
-                // that the player switched reply target, and thus this provider don't have the
-                // focus anymore.
                 ALOGW("Timed out waiting for sink written reply");
-                m_iWrittenSamples = len;
+                m_iWrittenSamples = 0;
             }
         }
 
