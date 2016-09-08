@@ -153,8 +153,9 @@ both full Java, or fully native code.
 Feel free to check out the open-sourced providers to get started, as well as the boilerplate
 AndroidManifest and Plugin Service java files. Here are a few steps to guide you through:
 
-- Create a project and import the providerlib module (copy the folder and add the module to your
-  ``settings.gradle`` file)
+- Create a project and import the ``providerlib`` module in one of these ways:
+  - copy the folder and add the module to your ``settings.gradle`` file
+  - **or** in Android Studio: download the library (using ``Download ZIP``), use ``File -> New -> Import Module`` to import the downloaded folder, go to ``build.gradle`` file and add under the ``dependecies{}`` section: ``compile project( ':encore-providerlib' )``
 - Add the required meta-data and actions in your AndroidManifest.xml
   (see ``com.fastbootmobile.encore.providers.Constants``)
 - Create a Service and implement either ``IMusicProvider`` or ``IDSPProvider`` depending on
